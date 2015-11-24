@@ -48,14 +48,12 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 QString MainWindow::setPath()
 {
-    QString path = "";
-    path = QFileDialog::getExistingDirectory( 0 , tr("Wybierz folder"), QDir::homePath() );
+    QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), QDir::homePath() );
     return path;
 }
 
 QString MainWindow::getSchedulePath()
 {
-    QString schedulePath = "";
     schedulePath = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), QDir::homePath(), tr("Pliki XLSX (*.xlsx)"));
     return schedulePath;
 }
@@ -74,9 +72,9 @@ void MainWindow::on_outputButton_released()
         ui->outputLineEdit->setText(outputPath);
 }
 
-void MainWindow::on_mainButtonReleased(const QPushButton *button)
+void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 {
-    if( button == ui->addButton )
+    if( mainButton == ui->addButton )
     {
         QString schedulePath = getSchedulePath();
         if ( !schedulePath.isEmpty() ) {
@@ -84,6 +82,24 @@ void MainWindow::on_mainButtonReleased(const QPushButton *button)
             ui->listLabel->setText("Lista plików dla harmonogramu: " + pathList.at(pathList.size()-1)  );
         }
     }
+
+    else if ( mainButton == ui->exitButton )
+        QApplication::quit();
+}
+
+void MainWindow::on_searchButton_clicked()
+{
+    QStringList missingPaths;
+
+    if( ui->inputLineEdit->text().isEmpty() || !ui->inputLineEdit->text().contains("/"))
+        missingPaths << "ścieżka wyszukiwania";
+    if( ui->outputLineEdit->text().isEmpty() || !ui->outputLineEdit->text().contains("/"))
+        missingPaths << "ścieżka wyjściowa";
+    if( schedulePath.isEmpty() || !schedulePath.contains("/"))
+        missingPaths << "ścieżka harmonogramu";
+
+    if (!missingPaths.isEmpty())
+        QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
 }
 
 

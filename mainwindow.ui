@@ -271,11 +271,6 @@ border: 1px solid black;
     <property name="styleSheet">
      <string notr="true">#bottomFrame {
 border: none;
-/*
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-stop: 0.49999 #717171, stop: 0.5 #626262,
-stop: 0.9 #4c4c4c, stop: 1 #333333);*/
 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
 stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
 stop: 0.49999 #717171);
@@ -290,29 +285,32 @@ border-top-left-radius:10px;
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>20</x>
        <y>8</y>
        <width>591</width>
-       <height>71</height>
+       <height>75</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="inputLayout">
         <item>
          <widget class="QLabel" name="inputLabel">
           <property name="minimumSize">
            <size>
-            <width>145</width>
+            <width>155</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>145</width>
+            <width>155</width>
             <height>16777215</height>
            </size>
           </property>
@@ -323,22 +321,50 @@ border-top-left-radius:10px;
         </item>
         <item>
          <widget class="QLineEdit" name="inputLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>30</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <family>Arial</family>
             <pointsize>8</pointsize>
            </font>
           </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">QLineEdit {
-    background-color: &quot;white&quot;;
     font-size: 10pt; 
-    color: &quot;gray&quot;;
+    color: &quot;white&quot;;
     font-family: &quot;Arial&quot;
 	border-radius: 5px;
     border-width: 2px solid lightgray;
-}
-</string>
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
+          <property name="placeholderText">
+           <string/>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -394,13 +420,13 @@ background: #A9A9A9 ;
          <widget class="QLabel" name="outputLabel">
           <property name="minimumSize">
            <size>
-            <width>145</width>
+            <width>155</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>145</width>
+            <width>155</width>
             <height>16777215</height>
            </size>
           </property>
@@ -411,16 +437,35 @@ background: #A9A9A9 ;
         </item>
         <item>
          <widget class="QLineEdit" name="outputLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">QLineEdit {
-    background-color: &quot;white&quot;;
     font-size: 10pt; 
-    color: &quot;gray&quot;;
+    color: &quot;white&quot;;
     font-family: &quot;Arial&quot;
 	border-radius: 5px;
     border-width: 2px solid lightgray;
-}
-</string>
+}</string>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -503,7 +548,7 @@ background: #A9A9A9 ;
      <rect>
       <x>85</x>
       <y>170</y>
-      <width>131</width>
+      <width>141</width>
       <height>16</height>
      </rect>
     </property>
@@ -523,7 +568,7 @@ background: #A9A9A9 ;
      <rect>
       <x>245</x>
       <y>170</y>
-      <width>71</width>
+      <width>81</width>
       <height>16</height>
      </rect>
     </property>
@@ -678,6 +723,9 @@ color: &quot;white&quot;
     </property>
     <property name="text">
      <string>Lista plików</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

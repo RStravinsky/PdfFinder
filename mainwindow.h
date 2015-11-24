@@ -25,10 +25,12 @@ signals:
 private slots:
     void on_inputButton_released();
     void on_outputButton_released();
-    void on_mainButtonReleased( const QPushButton * button );
+    void on_mainButtonReleased( const QPushButton * mainButton );
+    void on_searchButton_clicked();
 
 private:
     Ui::MainWindow *ui;
+    QString schedulePath{};
 
     bool eventFilter(QObject *obj, QEvent *event);
     QString setPath();
