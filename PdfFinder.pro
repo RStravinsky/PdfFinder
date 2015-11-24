@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = PdfFinder
 TEMPLATE = app
 
+CONFIG += c++11
+
 
 SOURCES += main.cpp\
         mainwindow.cpp
@@ -18,3 +20,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc
