@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include "finder.h"
+#include <QDir>
+#include <QFileDialog>
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -17,11 +20,35 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+      void mainButtonReleased(const QPushButton * mainButton);
+
 private slots:
-    void on_pushButton_released();
+    void on_inputButton_released();
+    void on_outputButton_released();
+    void on_mainButtonReleased(const QPushButton * mainButton);
+    void on_searchButton_clicked();
 
 private:
     Ui::MainWindow *ui;
+
+    enum readType
+    {
+        INIT = 0,
+        INPUT = 1,
+        OUTPUT = 2
+    };
+
+    bool eventFilter(QObject *obj, QEvent *event);
+    QString getInputPath();
+    QString getOutputPath();
+    QString getSchedulePath();
+
+    QString getPathFromFile(readType type);
+    void savePathToFile();
+    void fillPaths();
+
+
 };
 
 #endif // MAINWINDOW_H
