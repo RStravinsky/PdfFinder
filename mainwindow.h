@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
+#include "finder.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QDebug>

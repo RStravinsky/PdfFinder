@@ -63,7 +63,7 @@ QString MainWindow::getPathFromFile(readType type)
         }
 
     QTextStream out(&pathFile);
-    out >> readPath;
+    readPath = out.readLine();
 
     if(!readPath.isEmpty() && type != readType::INIT) {
         QStringList pathList = readPath.split(";");
@@ -184,12 +184,10 @@ void MainWindow::on_searchButton_clicked()
     if (!missingPaths.isEmpty())
         QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
     else {
+        /* Searching */
         if(settingsDialog->isTurnOn) {
             player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
             player -> play();
             }
-        /* Searching ... */
     }
 }
-
-
