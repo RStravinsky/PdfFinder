@@ -12,6 +12,7 @@ TARGET = PdfFinder
 TEMPLATE = app
 
 CONFIG += c++11
+CONFIG += debug
 
 
 SOURCES += main.cpp\

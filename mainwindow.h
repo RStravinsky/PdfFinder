@@ -20,21 +20,34 @@ public:
     ~MainWindow();
 
 signals:
-      void mainButtonReleased( const QPushButton * button );
+      void mainButtonReleased(const QPushButton * mainButton);
 
 private slots:
     void on_inputButton_released();
     void on_outputButton_released();
-    void on_mainButtonReleased( const QPushButton * mainButton );
+    void on_mainButtonReleased(const QPushButton * mainButton);
     void on_searchButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QString schedulePath{};
+
+    enum readType
+    {
+        INIT = 0,
+        INPUT = 1,
+        OUTPUT = 2
+    };
 
     bool eventFilter(QObject *obj, QEvent *event);
-    QString setPath();
+    QString getInputPath();
+    QString getOutputPath();
     QString getSchedulePath();
+
+    QString getPathFromFile(readType type);
+    void savePathToFile();
+    void fillPaths();
+
+
 };
 
 #endif // MAINWINDOW_H

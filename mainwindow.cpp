@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->exitButton->installEventFilter(this);
 
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
+    fillPaths();
 }
 
 MainWindow::~MainWindow()
@@ -46,30 +47,102 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
-QString MainWindow::setPath()
+QString MainWindow::getPathFromFile(readType type)
 {
-    QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), QDir::homePath() );
+    QString readPath{};
+    QDir dir;
+    QString projectPath = dir.absolutePath();
+    QFile pathFile(projectPath+"/PATH.txt");
+
+    if (!pathFile.open(QIODevice::ReadOnly)) {
+            QMessageBox::information(this, "Informacja", "Ścieżka nie odczytana poprawnie\n.ERROR: can't open PATH.txt");
+            return QString(QDir::homePath());
+        }
+
+    QTextStream out(&pathFile);
+    out >> readPath;
+
+    if(!readPath.isEmpty() && type != readType::INIT) {
+        QStringList pathList = readPath.split(";");
+        if(type == readType::INPUT) readPath = pathList.at(0);
+        else if(type == readType::OUTPUT) readPath = pathList.at(1);
+    }
+
+    pathFile.close();
+    return readPath == "" ? QString(QDir::homePath()) : readPath;
+}
+
+void MainWindow::savePathToFile()
+{
+    QDir dir;
+    QString projectPath = dir.absolutePath();
+    QFile pathFile(projectPath+"/PATH.txt");
+
+    if (!pathFile.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, "Informacja", "Ścieżka nie zapisana poprawnie\n. ERROR: can't open PATH.txt");
+            return;
+        }
+
+    QTextStream in(&pathFile);
+    in << ui->inputLineEdit->text() + ";" + ui->outputLineEdit->text();
+    pathFile.close();
+}
+
+void MainWindow::fillPaths()
+{
+    QString path = getPathFromFile(INIT);
+
+    if( path == QString(QDir::homePath())){
+        ui->inputLineEdit->setText(path);
+        ui->outputLineEdit->setText(path);
+    }
+    else {
+        QStringList pathList = path.split(";");
+
+        if( pathList.at(0).isEmpty()) ui->inputLineEdit->setText(QString(QDir::homePath()));
+        else ui->inputLineEdit->setText(pathList.at(0));
+
+        if( pathList.at(1).isEmpty()) ui->outputLineEdit->setText(QString(QDir::homePath()));
+        else ui->outputLineEdit->setText(pathList.at(1));
+    }
+}
+
+QString MainWindow::getInputPath()
+{
+    QString initPath = getPathFromFile(INPUT);
+    QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), initPath );
+    return path;
+}
+
+QString MainWindow::getOutputPath()
+{
+    QString initPath = getPathFromFile(OUTPUT);
+    QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), initPath );
     return path;
 }
 
 QString MainWindow::getSchedulePath()
 {
-    schedulePath = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), QDir::homePath(), tr("Pliki XLSX (*.xlsx)"));
+    QString schedulePath = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
     return schedulePath;
 }
 
 void MainWindow::on_inputButton_released()
 {
-    QString inputPath = setPath();
-    if ( !inputPath.isEmpty() )
+    QString inputPath = getInputPath();
+    if ( !inputPath.isEmpty() ) {
         ui->inputLineEdit->setText(inputPath);
+        savePathToFile();
+    }
 }
 
 void MainWindow::on_outputButton_released()
 {
-    QString outputPath = setPath();
-    if ( !outputPath.isEmpty() )
+    QString outputPath = getOutputPath();
+    if ( !outputPath.isEmpty() ) {
         ui->outputLineEdit->setText(outputPath);
+        savePathToFile();
+    }
 }
 
 void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
@@ -79,7 +152,8 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
         QString schedulePath = getSchedulePath();
         if ( !schedulePath.isEmpty() ) {
             QStringList pathList  = schedulePath.split("/");
-            ui->listLabel->setText("Lista plików dla harmonogramu: " + pathList.at(pathList.size()-1)  );
+            ui->scheduleLineEdit->setText(pathList.at(pathList.size()-1));
+            ui->scheduleLineEdit->setCursorPosition(0);
         }
     }
 
@@ -94,12 +168,15 @@ void MainWindow::on_searchButton_clicked()
     if( ui->inputLineEdit->text().isEmpty() || !ui->inputLineEdit->text().contains("/"))
         missingPaths << "ścieżka wyszukiwania";
     if( ui->outputLineEdit->text().isEmpty() || !ui->outputLineEdit->text().contains("/"))
-        missingPaths << "ścieżka wyjściowa";
-    if( schedulePath.isEmpty() || !schedulePath.contains("/"))
+        missingPaths << "ścieżka zapisu";
+    if( ui->scheduleLineEdit->text().isEmpty() || !ui->scheduleLineEdit->text().contains("xlsx"))
         missingPaths << "ścieżka harmonogramu";
 
     if (!missingPaths.isEmpty())
         QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
+    else {
+        /* Searching ... */
+    }
 }
 
 
