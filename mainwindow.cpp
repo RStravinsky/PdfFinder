@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
     fillPaths();
+
+    settingsDialog = new SettingsDialog(this,true);
+    player = new QMediaPlayer(this);
 }
 
 MainWindow::~MainWindow()
@@ -159,6 +162,12 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
     else if ( mainButton == ui->exitButton )
         QApplication::quit();
+
+    else if ( mainButton == ui->settingsButton ) {
+        settingsDialog->previousState = settingsDialog->isTurnOn;
+        settingsDialog->exec();
+    }
+
 }
 
 void MainWindow::on_searchButton_clicked()
@@ -175,6 +184,10 @@ void MainWindow::on_searchButton_clicked()
     if (!missingPaths.isEmpty())
         QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
     else {
+        if(settingsDialog->isTurnOn) {
+            player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
+            player -> play();
+            }
         /* Searching ... */
     }
 }

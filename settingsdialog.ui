@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsDialog</class>
+ <widget class="QDialog" name="SettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>248</width>
+    <height>121</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#SettingsDialog { background: &quot;gray&quot; }</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>20</y>
+     <width>251</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; color:#ffffff;&quot;&gt;Sygnał dzwiękowy po zakończeniu &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>191</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QComboBox {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+
+QComboBox:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QComboBox:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+
+
+QComboBox::down-arrow{
+ image: url(:/images/images/downArrow.png);
+ height: 70px;
+ width:  70px;
+}
+
+QComboBox::down-arrow:on{
+top: 1px;
+left: 1px;
+}</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>TAK</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>NIE</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QPushButton" name="okButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>80</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>151</x>
+     <y>80</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Anuluj</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
