@@ -7,18 +7,36 @@ Finder::Finder(QString folderPath, QObject *parent) : QObject(parent)
 
 void Finder::findFiles()
 {
-    QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
+    bool isFound;
 
-    for(int i=0; i<m_fileList.count(); ++i)
+
+    QProgressDialog progressDialog(this);
+    progressDialog.setCancelButtonText(tr("&Cancel"));
+    progressDialog.setRange(0, files.size());
+    progressDialog.setWindowTitle(tr("Find Files"));
+
+
+    for(int i=0; i<m_fileList.size(); ++i)
     {
+        QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
+        isFound = false;
         while (dirIt.hasNext())
         {
             dirIt.next();
             if (QFileInfo(dirIt.filePath()).isFile())
-                if (QFileInfo(dirIt.filePath()).fileName() == m_fileList.at(i))
-                    qDebug()<<dirIt.filePath();
+            {
+                if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0)
+                {
+                    isFound = true;
+                    qDebug()<< "FOUND:" <<dirIt.filePath();
+                    break;
+                }
+            }
         }
+
+        if(!isFound) qDebug()<< "NOT FOUND:" << m_fileList.at(i);
     }
+
 }
 
 void Finder::loadFileList(QString schedulePath)
@@ -79,6 +97,6 @@ void Finder::loadFileList(QString schedulePath)
         }
     }
 
-   for(int i=0; i<m_fileList.count(); ++i)
-   qDebug() << m_fileList.at(i);
+   //for(int i=0; i<m_fileList.count(); ++i)
+   //qDebug() << m_fileList.at(i);
 }
