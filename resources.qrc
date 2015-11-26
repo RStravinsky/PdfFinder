@@ -12,5 +12,7 @@
         <file>images/success.mp3</file>
         <file>images/found.ico</file>
         <file>images/notfound.ico</file>
+        <file>images/magnifier.png</file>
+        <file>images/clear.png</file>
     </qresource>
 </RCC>

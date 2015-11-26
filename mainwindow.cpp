@@ -11,11 +11,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->helpButton->installEventFilter(this);
     ui->exitButton->installEventFilter(this);
 
-    QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
-    fillPaths();
-
     settingsDialog = new SettingsDialog(this,true);
     player = new QMediaPlayer(this);
+
+    QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
+
+    fillPaths();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -25,26 +28,30 @@ MainWindow::~MainWindow()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    QPushButton * actualButton = qobject_cast<QPushButton *>(obj);
+    if(!processing) {
+        QPushButton * actualButton = qobject_cast<QPushButton *>(obj);
 
-    if (event->type() == QEvent::HoverEnter) {
-        actualButton->setIconSize(QSize(52, 52));
-        return true;
-    }
-    else if (event->type() == QEvent::HoverLeave) {
-        actualButton->setIconSize(QSize(48, 48));
-        return true;
-    }
+        if (event->type() == QEvent::HoverEnter) {
+            actualButton->setIconSize(QSize(52, 52));
+            return true;
+        }
+        else if (event->type() == QEvent::HoverLeave) {
+            actualButton->setIconSize(QSize(48, 48));
+            return true;
+        }
 
-    else if (event->type() == QEvent::MouseButtonRelease) {
-        actualButton->setIconSize(QSize(52, 52));
-        emit mainButtonReleased(actualButton);
-        return true;
-    }
+        else if (event->type() == QEvent::MouseButtonRelease) {
+            actualButton->setIconSize(QSize(52, 52));
+            emit mainButtonReleased(actualButton);
+            return true;
+        }
 
-    else if (event->type() == QEvent::MouseButtonPress) {
-        actualButton->setIconSize(QSize(30, 30));
-        return true;
+        else if (event->type() == QEvent::MouseButtonPress) {
+            actualButton->setIconSize(QSize(30, 30));
+            return true;
+        }
+
+        return false;
     }
 
     return false;
@@ -110,6 +117,26 @@ void MainWindow::fillPaths()
     }
 }
 
+void MainWindow::setEnabled(bool isEnabled)
+{
+    if(isEnabled) {
+        processing = true;
+        ui->listWidget->clear();
+        ui->label->setVisible(false);
+        ui->inputLineEdit->setEnabled(false);
+        ui->outputLineEdit->setEnabled(false);
+        ui->searchButton->setText("ANULUJ");
+        ui->searchButton->setIcon(QIcon(":/images/images/clear.png"));
+    }
+    else {
+        processing = false;
+        ui->inputLineEdit->setEnabled(true);
+        ui->outputLineEdit->setEnabled(true);
+        ui->searchButton->setText("WYSZUKAJ");
+        ui->searchButton->setIcon(QIcon(":/images/images/search.png"));
+    }
+}
+
 QString MainWindow::getInputPath()
 {
     QString initPath = getPathFromFile(INPUT);
@@ -132,6 +159,8 @@ QString MainWindow::getSchedulePath()
 
 void MainWindow::on_inputButton_released()
 {
+    if(processing) return;
+
     QString inputPath = getInputPath();
     if ( !inputPath.isEmpty() ) {
         ui->inputLineEdit->setText(inputPath);
@@ -141,6 +170,8 @@ void MainWindow::on_inputButton_released()
 
 void MainWindow::on_outputButton_released()
 {
+    if(processing) return;
+
     QString outputPath = getOutputPath();
     if ( !outputPath.isEmpty() ) {
         ui->outputLineEdit->setText(outputPath);
@@ -152,7 +183,7 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 {
     if( mainButton == ui->addButton )
     {
-        QString schedulePath = getSchedulePath();
+        schedulePath = getSchedulePath();
         if ( !schedulePath.isEmpty() ) {
             QStringList pathList  = schedulePath.split("/");
             ui->scheduleLineEdit->setText(pathList.at(pathList.size()-1));
@@ -164,13 +195,6 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
         QApplication::quit();
 
 
-    else if ( mainButton == ui->helpButton )
-        {
-            Finder f(QString("C:/Users/BPokrzywa/Desktop/SR-357.00.00.00"), QString("C:/Users/BPokrzywa/Desktop/MORDA"));
-            QObject::connect(&f,SIGNAL(itemFound(QString,bool)),this,SLOT(on_itemFound(QString,bool)));
-            f.findFiles(QString("C:/Users/BPokrzywa/Desktop/RZ-398_09_15 (Stoły rehabilitacyjne).xlsx"));
-        }
-
     else if ( mainButton == ui->settingsButton )
     {
         settingsDialog->previousState = settingsDialog->isTurnOn;
@@ -179,26 +203,41 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
 }
 
-
 void MainWindow::on_searchButton_clicked()
 {
-    QStringList missingPaths;
+    if(!processing) { // search button
 
-    if( ui->inputLineEdit->text().isEmpty() || !ui->inputLineEdit->text().contains("/"))
-        missingPaths << "ścieżka wyszukiwania";
-    if( ui->outputLineEdit->text().isEmpty() || !ui->outputLineEdit->text().contains("/"))
-        missingPaths << "ścieżka zapisu";
-    if( ui->scheduleLineEdit->text().isEmpty() || !ui->scheduleLineEdit->text().contains("xlsx"))
-        missingPaths << "ścieżka harmonogramu";
+        QStringList missingPaths;
 
-    if (!missingPaths.isEmpty())
-        QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
-    else {
-        /* Searching */
-        if(settingsDialog->isTurnOn) {
-            player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
-            player -> play();
-            }
+        if( ui->inputLineEdit->text().isEmpty() || !ui->inputLineEdit->text().contains("/"))
+            missingPaths << "ścieżka wyszukiwania";
+        if( ui->outputLineEdit->text().isEmpty() || !ui->outputLineEdit->text().contains("/"))
+            missingPaths << "ścieżka zapisu";
+        if( ui->scheduleLineEdit->text().isEmpty() || !ui->scheduleLineEdit->text().contains("xlsx"))
+            missingPaths << "ścieżka harmonogramu";
+
+        if (!missingPaths.isEmpty())
+            QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
+        else {
+
+            setEnabled(true);
+
+            f = new Finder(ui->inputLineEdit->text(),ui->outputLineEdit->text(),this);
+            QObject::connect( f,SIGNAL(itemFound(QString,bool)),this,SLOT(on_itemFound(QString,bool)));
+            QObject::connect( f, SIGNAL( signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
+            f->findFiles(schedulePath);
+
+            setEnabled(false);
+
+            if(settingsDialog->isTurnOn) {
+                player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
+                player -> play();
+                }
+        }
+    }
+
+    else { // clear button
+        qDebug() << "CLEAR..." << endl;;
     }
 }
 
@@ -208,5 +247,14 @@ void MainWindow::on_itemFound(QString itemName, bool isFound)
     else ui->listWidget->addItem(new QListWidgetItem(QIcon(":/images/images/notfound.ico"),itemName));
 
     ui->listWidget->scrollToBottom();
+}
+
+void MainWindow::on_setValue(int value, QString labelText)
+{
+    ui->progressBar->setValue(value);
+    ui->statusLabel->setText(labelText);
 
 }
+
+
+

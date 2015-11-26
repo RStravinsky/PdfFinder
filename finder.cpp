@@ -5,13 +5,16 @@ Finder::Finder(QString searchedFolder, QString targetFolder, QObject *parent) :m
 
 }
 
-void Finder::findFiles(QString schedulePath)
+
+void Finder::findFiles(const QString schedulePath)
 {
     loadFileList(schedulePath);
-    uint itemsAmount = m_fileList.size();
     bool isFound;
-
     QStringList missingFiles;
+    int count{};
+
+    qDebug() << "searched: " << m_searchedFolder << endl;
+    qDebug() << "target: " << m_targetFolder << endl;
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -27,7 +30,6 @@ void Finder::findFiles(QString schedulePath)
                     emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
                     qApp->processEvents();
                     break;
-                    //qDebug()<< "FOUND:" << dirIt.fileName();
                 }
             }
         }
@@ -35,8 +37,13 @@ void Finder::findFiles(QString schedulePath)
         if(!isFound)
         {
             emit itemFound(m_fileList.at(i),false);
-           // qDebug()<< "NOT FOUND:" << m_fileList.at(i) << endl;
-           missingFiles << m_fileList.at(i);
+            missingFiles << m_fileList.at(i);
+        }
+        else {
+            //qDebug() << i << endl;
+            emit signalProgress( int((double(i)/double(m_fileList.size())*100))+1,
+                                 "Kopiowanie plików: " + QString::number(count++) + "/" + QString::number(m_fileList.size()));
+
         }
     }
 
@@ -69,8 +76,12 @@ void Finder::findFiles(QString schedulePath)
     info.exec();
 }
 
-void Finder::loadFileList(QString schedulePath)
+void Finder::loadFileList(const QString schedulePath)
 {
+
+    emit signalProgress(100, "Wczytywanie harmonogramu ...");
+    qApp->processEvents();
+
     QXlsx::Document schedule(schedulePath);
     int lastRow = 0;
     QString currentCellNumber;
@@ -125,9 +136,11 @@ void Finder::loadFileList(QString schedulePath)
                 m_fileList << cell->value().toString().trimmed() + ".pdf";
             }
         }
+    emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
+    //qApp->processEvents();
     }
 
-}
+ }
 
 QString Finder::renameFile(int num, QString fileName)
 {
@@ -141,3 +154,5 @@ QString Finder::renameFile(int num, QString fileName)
     return resultName;
 
 }
+
+

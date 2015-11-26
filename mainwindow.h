@@ -9,8 +9,10 @@
 #include <QDebug>
 #include <settingsdialog.h>
 #include <QMediaPlayer>
+#include <QFutureWatcher>
 
 #include <stddef.h>
+#include <finder.h>
 
 namespace Ui {
 class MainWindow;
@@ -33,12 +35,16 @@ private slots:
     void on_mainButtonReleased(const QPushButton * mainButton);
     void on_searchButton_clicked();
     void on_itemFound(QString itemName, bool isFound);
+    void on_setValue(int value, QString labelText);
 
 private:
     Ui::MainWindow *ui;
 
+    QString schedulePath{};
+    bool processing{false};
     QMediaPlayer * player{nullptr};
     SettingsDialog * settingsDialog{nullptr};
+    Finder * f{nullptr};
 
     enum readType
     {
@@ -55,6 +61,8 @@ private:
     QString getPathFromFile(readType type);
     void savePathToFile();
     void fillPaths();
+
+    void setEnabled(bool isEnabled);
 
 
 };

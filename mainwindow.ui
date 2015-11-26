@@ -148,6 +148,9 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
      <string notr="true">QListWidget {
     background-color: &quot;white&quot;;
     font-size: 10pt;
+    color: &quot;gray&quot;;
+    font-size: 9pt;
+    font-family: &quot;Arial&quot;;
 	border-radius: 5px;
     border-width: 2px solid lightgray;
 }
@@ -237,6 +240,12 @@ background: #A9A9A9 ;
       <height>31</height>
      </rect>
     </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777211</width>
+      <height>16777215</height>
+     </size>
+    </property>
     <property name="styleSheet">
      <string notr="true">QProgressBar {
 border: 1px solid lightgray;
@@ -255,7 +264,7 @@ border: 1px solid black;
 }</string>
     </property>
     <property name="value">
-     <number>24</number>
+     <number>0</number>
     </property>
     <property name="textVisible">
      <bool>false</bool>
@@ -750,7 +759,7 @@ background: #A9A9A9 ;
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -804,6 +813,48 @@ color: &quot;white&quot;
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="statusLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>416</y>
+      <width>341</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+border: none;
+background: &quot;transparent&quot;;
+color: &quot;white&quot;;
+font-size: 9pt;
+font-family: &quot;Arial&quot;;
+font-weight: bold;
+}</string>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>230</y>
+      <width>131</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/images/images/magnifier.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
  </widget>
