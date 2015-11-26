@@ -64,16 +64,18 @@ void Finder::loadFileList(QString schedulePath)
                 }
             }
 
-            if ( (cell->format().patternBackgroundColor().toRgb() == orange && !cell->value().toString().isEmpty()) || (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()) )
+            if ((cell->format().patternBackgroundColor().toRgb() == orange && !cell->value().toString().isEmpty()) ||
+                (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()))
             {
                 m_fileList << cell->value().toString() + ".pdf";
             }
 
-            if(cell->format().patternBackgroundColor().toRgb() == yellow && (!cell->value().toString().isEmpty()) && schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
+            if(cell->format().patternBackgroundColor().toRgb() == yellow &&
+               !cell->value().toString().isEmpty() &&
+               schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
             {
                 m_fileList << cell->value().toString() + ".pdf "  + schedule.cellAt(row, 4)->value().toString();
             }
-
         }
     }
 

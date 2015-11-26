@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xlsx
+QT += core gui xlsx multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,13 +16,16 @@ CONFIG += debug
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    finder.cpp
+     mainwindow.cpp \
+     settingsdialog.cpp \
+     finder.cpp
 
 HEADERS  += mainwindow.h \
-    finder.h
+      settingsdialog.h \
+      finder.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     resources.qrc

@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
     fillPaths();
+
+    settingsDialog = new SettingsDialog(this,true);
+    player = new QMediaPlayer(this);
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +63,7 @@ QString MainWindow::getPathFromFile(readType type)
         }
 
     QTextStream out(&pathFile);
-    out >> readPath;
+    readPath = out.readLine();
 
     if(!readPath.isEmpty() && type != readType::INIT) {
         QStringList pathList = readPath.split(";");
@@ -160,12 +163,19 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
     else if ( mainButton == ui->exitButton )
         QApplication::quit();
 
+
     else if ( mainButton == ui->helpButton )
         {
             Finder f(QString("C:\\Users\\BPokrzywa\\Desktop\\SR-357.00.00.00"));
             f.loadFileList(QString("C:\\Users\\BPokrzywa\\Desktop\\RZ-398_09_15 (Stoły rehabilitacyjne).xlsx"));
             f.findFiles();
         }
+
+    else if ( mainButton == ui->settingsButton )
+    {
+        settingsDialog->previousState = settingsDialog->isTurnOn;
+        settingsDialog->exec();
+    }
 
 }
 
@@ -184,6 +194,10 @@ void MainWindow::on_searchButton_clicked()
     if (!missingPaths.isEmpty())
         QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
     else {
-        /* Searching ... */
+        /* Searching */
+        if(settingsDialog->isTurnOn) {
+            player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
+            player -> play();
+            }
     }
 }

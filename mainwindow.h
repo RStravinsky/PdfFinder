@@ -7,6 +7,10 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QDebug>
+#include <settingsdialog.h>
+#include <QMediaPlayer>
+
+#include <stddef.h>
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +35,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QMediaPlayer * player{nullptr};
+    SettingsDialog * settingsDialog{nullptr};
 
     enum readType
     {
