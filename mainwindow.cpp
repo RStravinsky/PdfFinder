@@ -159,7 +159,16 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
     else if ( mainButton == ui->exitButton )
         QApplication::quit();
+
+    else if ( mainButton == ui->helpButton )
+        {
+            Finder f(QString("C:\\Users\\BPokrzywa\\Desktop\\SR-357.00.00.00"));
+            f.loadFileList(QString("C:\\Users\\BPokrzywa\\Desktop\\RZ-398_09_15 (Stoły rehabilitacyjne).xlsx"));
+            f.findFiles();
+        }
+
 }
+
 
 void MainWindow::on_searchButton_clicked()
 {

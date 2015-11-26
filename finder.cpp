@@ -1,13 +1,29 @@
 #include "finder.h"
 
-Finder::Finder(QObject *parent) : QObject(parent)
+Finder::Finder(QString folderPath, QObject *parent) : QObject(parent)
 {
-
+    m_folder = folderPath;
 }
 
-void Finder::loadFileList()
+void Finder::findFiles()
 {
-    QXlsx::Document schedule(QString("C:\\Users\\BPokrzywa\\Desktop\\398_09_15 (Stoły rehabilitacyjne).xlsx"));
+    QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
+
+    for(int i=0; i<m_fileList.count(); ++i)
+    {
+        while (dirIt.hasNext())
+        {
+            dirIt.next();
+            if (QFileInfo(dirIt.filePath()).isFile())
+                if (QFileInfo(dirIt.filePath()).fileName() == m_fileList.at(i))
+                    qDebug()<<dirIt.filePath();
+        }
+    }
+}
+
+void Finder::loadFileList(QString schedulePath)
+{
+    QXlsx::Document schedule(schedulePath);
     int lastRow = 0;
     QString currentCellNumber;
 
@@ -42,25 +58,25 @@ void Finder::loadFileList()
                 {
                     if((!nextCell->value().toString().isEmpty()) && schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
                     {
-                        fileList << cell->value().toString() + ".pdf";
-                        fileList << cell->value().toString() + "_WYKAZ.pdf";
+                        m_fileList << cell->value().toString() + ".pdf";
+                        m_fileList << cell->value().toString() + "_WYKAZ.pdf";
                     }
                 }
             }
 
             if ( (cell->format().patternBackgroundColor().toRgb() == orange && !cell->value().toString().isEmpty()) || (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()) )
             {
-                fileList << cell->value().toString() + ".pdf";
+                m_fileList << cell->value().toString() + ".pdf";
             }
 
             if(cell->format().patternBackgroundColor().toRgb() == yellow && (!cell->value().toString().isEmpty()) && schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
             {
-                fileList << cell->value().toString() + ".pdf "  + schedule.cellAt(row, 4)->value().toString();
+                m_fileList << cell->value().toString() + ".pdf "  + schedule.cellAt(row, 4)->value().toString();
             }
 
         }
     }
 
-   for(int i=0; i<fileList.count(); ++i)
-    qDebug() << fileList.at(i);
+   for(int i=0; i<m_fileList.count(); ++i)
+   qDebug() << m_fileList.at(i);
 }
