@@ -5,8 +5,11 @@ Finder::Finder(QString folderPath, QObject *parent) :m_folder(folderPath), QObje
 
 }
 
-void Finder::findFiles()
+void Finder::findFiles(const QString schedulePath)
 {
+    loadFileList(schedulePath);
+
+    int count{};
     for(int i=0; i<m_fileList.size(); ++i)
     {
         bool isFound = false;
@@ -18,19 +21,27 @@ void Finder::findFiles()
                 if (dirIt.fileName() == m_fileList.at(i)) {
                     isFound = true;
                     emit itemFound(m_fileList.at(i),true);
+                    qApp->processEvents();
                     break;
-                    //qDebug()<< "FOUND:" << dirIt.fileName();
                 }
             }
         }
 
         if(!isFound) emit itemFound(m_fileList.at(i),false);
-           // qDebug()<< "NOT FOUND:" << m_fileList.at(i) << endl;
+        else {
+            qDebug() << i << endl;
+            emit signalProgress( int((double(i)/double(m_fileList.size())*100))+1,
+                                 "Kopiowanie plików: " + QString::number(count++) + "/" + QString::number(m_fileList.size()));
+        }
     }
 }
 
-void Finder::loadFileList(QString schedulePath)
+void Finder::loadFileList(const QString schedulePath)
 {
+
+    emit signalProgress(100, "Wczytywanie harmonogramu ...");
+    qApp->processEvents();
+
     QXlsx::Document schedule(schedulePath);
     int lastRow = 0;
     QString currentCellNumber;
@@ -85,8 +96,10 @@ void Finder::loadFileList(QString schedulePath)
                 m_fileList << cell->value().toString() + ".pdf "  + schedule.cellAt(row, 4)->value().toString();
             }
         }
-    }
 
-   for(int i=0; i<m_fileList.count(); ++i)
-   qDebug() << m_fileList.at(i);
+        emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
+        //qApp->processEvents();
+    }
 }
+
+

@@ -5,23 +5,23 @@
 #include <QtXlsx>
 #include <QDir>
 #include <QDirIterator>
+#include <QTimer>
 
 class Finder : public QObject
 {
     Q_OBJECT
 public:
     explicit Finder(QString folderPath, QObject *parent = 0);
-    void findFiles();
+    void findFiles(const QString schedulePath);
+    QStringList m_fileList;
 
 signals:
     void itemFound(QString itemName, bool isFound);
-
-public slots:
-    void loadFileList(QString schedulePath);
+    void signalProgress(int, QString);
 
 private:
-    QStringList m_fileList;
     QString m_folder;
+    void loadFileList(const QString schedulePath);
 };
 
 #endif // FINDER_H
