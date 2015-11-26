@@ -166,8 +166,9 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
     else if ( mainButton == ui->helpButton )
         {
-            Finder f(QString("C:\\Users\\BPokrzywa\\Desktop\\SR-357.00.00.00"));
-            f.loadFileList(QString("C:\\Users\\BPokrzywa\\Desktop\\RZ-398_09_15 (Stoły rehabilitacyjne).xlsx"));
+            Finder f(QString("C:\\Users\\RStrawinski\\Desktop\\SR-357.00.00.00"));
+            QObject::connect(&f,SIGNAL(itemFound(QString,bool)),this,SLOT(on_itemFound(QString,bool)));
+            f.loadFileList(QString("C:\\Users\\RStrawinski\\Desktop\\RZ-398_09_15 (Stoły rehabilitacyjne).xlsx"));
             f.findFiles();
         }
 
@@ -200,4 +201,10 @@ void MainWindow::on_searchButton_clicked()
             player -> play();
             }
     }
+}
+
+void MainWindow::on_itemFound(QString itemName, bool isFound)
+{
+    if(isFound) ui->listWidget->addItem(new QListWidgetItem(QIcon(":/images/images/found.ico"),itemName));
+    else ui->listWidget->addItem(new QListWidgetItem(QIcon(":/images/images/notfound.ico"),itemName));
 }

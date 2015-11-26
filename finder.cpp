@@ -1,23 +1,31 @@
 #include "finder.h"
 
-Finder::Finder(QString folderPath, QObject *parent) : QObject(parent)
+Finder::Finder(QString folderPath, QObject *parent) :m_folder(folderPath), QObject(parent)
 {
-    m_folder = folderPath;
+
 }
 
 void Finder::findFiles()
 {
-    QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
-
-    for(int i=0; i<m_fileList.count(); ++i)
+    for(int i=0; i<m_fileList.size(); ++i)
     {
+        bool isFound = false;
+        QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
         while (dirIt.hasNext())
         {
             dirIt.next();
-            if (QFileInfo(dirIt.filePath()).isFile())
-                if (QFileInfo(dirIt.filePath()).fileName() == m_fileList.at(i))
-                    qDebug()<<dirIt.filePath();
+            if (QFileInfo(dirIt.filePath()).isFile()) {
+                if (dirIt.fileName() == m_fileList.at(i)) {
+                    isFound = true;
+                    emit itemFound(m_fileList.at(i),true);
+                    break;
+                    //qDebug()<< "FOUND:" << dirIt.fileName();
+                }
+            }
         }
+
+        if(!isFound) emit itemFound(m_fileList.at(i),false);
+           // qDebug()<< "NOT FOUND:" << m_fileList.at(i) << endl;
     }
 }
 

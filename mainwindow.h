@@ -25,13 +25,14 @@ public:
     ~MainWindow();
 
 signals:
-      void mainButtonReleased(const QPushButton * mainButton);
+    void mainButtonReleased(const QPushButton * mainButton);
 
 private slots:
     void on_inputButton_released();
     void on_outputButton_released();
     void on_mainButtonReleased(const QPushButton * mainButton);
     void on_searchButton_clicked();
+    void on_itemFound(QString itemName, bool isFound);
 
 private:
     Ui::MainWindow *ui;

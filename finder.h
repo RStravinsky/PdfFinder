@@ -14,6 +14,7 @@ public:
     void findFiles();
 
 signals:
+    void itemFound(QString itemName, bool isFound);
 
 public slots:
     void loadFileList(QString schedulePath);

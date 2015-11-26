@@ -10,5 +10,7 @@
         <file>images/search.png</file>
         <file>images/downArrow.png</file>
         <file>images/success.mp3</file>
+        <file>images/found.ico</file>
+        <file>images/notfound.ico</file>
     </qresource>
 </RCC>
