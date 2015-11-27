@@ -229,7 +229,10 @@ void MainWindow::on_searchButton_clicked()
             missingPaths << "ścieżka harmonogramu";
 
         if (!missingPaths.isEmpty())
-            QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
+            if( ui->inputLineEdit->text() == ui->outputLineEdit->text() )
+                QMessageBox::information(this, tr("Informacja"), QString("Ścieżka wyszukiwania nie może być scieżką zapisu."));
+            else
+                QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
         else {      
             setEnabled(true);
 

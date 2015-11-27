@@ -31,7 +31,6 @@ void Finder::findFiles()
     bool isFound;
     QStringList missingFiles;
     QStringList copiedFiles;
-    int count{};
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -39,7 +38,6 @@ void Finder::findFiles()
         QDirIterator dirIt(m_searchedFolder, QDirIterator::Subdirectories);
         while (dirIt.hasNext())
         {
-
             bool abort = m_abort;
             if (abort) {
                 removeCopiedFiles(copiedFiles);
@@ -66,11 +64,9 @@ void Finder::findFiles()
             emit itemFound(m_fileList.at(i),false);
             missingFiles << m_fileList.at(i);
         }
-        else {
-            emit signalProgress( int((double(i)/double(m_fileList.size())*100))+1,
-                                 "Kopiowanie plików: " + QString::number(count++) + "/" + QString::number(m_fileList.size()));
 
-        }
+        emit signalProgress( int((double(i+1)/double(m_fileList.size())*100))+1,
+                             "Przeszukiwanie plików: " + QString::number(i+1) + "/" + QString::number(m_fileList.size()));
     }
 
     QString information = generateCSV(missingFiles);
