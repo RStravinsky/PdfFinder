@@ -5,6 +5,7 @@
 #include <QtXlsx>
 #include <QDir>
 #include <QDirIterator>
+#include <QMessageBox>
 #include <QTimer>
 #include <QThread>
 
@@ -12,15 +13,14 @@ class Finder : public QObject
 {
     Q_OBJECT
 public:
-    explicit Finder(QString folderPath, QString schedulePath, QObject *parent = 0);
-    QStringList m_fileList;
+    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder);
     void requestWork();
     void abort();
 
 signals:
     void itemFound(QString itemName, bool isFound);
     void signalProgress(int, QString);
-    void finished(bool);
+    void finished(bool,QString = "");
     void workRequested();
 
 public slots:
@@ -28,9 +28,12 @@ public slots:
 
 private:
     bool loadFileList();
-    QString m_folder;
+    QString renameFile(int num, QString fileName);
+    QStringList m_fileList;
     QString m_schedulePath;
-    QMutex mutex;
+    QString m_searchedFolder;
+    QString m_targetFolder;
+    QString generateCSV(QStringList & missingFiles);
     bool m_abort;
     bool m_working;
 };

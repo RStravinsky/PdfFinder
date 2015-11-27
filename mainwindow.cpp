@@ -224,22 +224,22 @@ void MainWindow::on_searchButton_clicked()
 
         if (!missingPaths.isEmpty())
             QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
-        else {
+        else {      
             setEnabled(true);
 
             if(finder!=nullptr) delete finder;
             if(finderThread!=nullptr) delete finderThread;
-            finder = new Finder(ui->inputLineEdit->text(),schedulePath);
+            finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text());
             finderThread = new QThread();
             finder->moveToThread(finderThread);
 
-            QObject::connect( finder, SIGNAL(finished(bool)), this, SLOT(on_processingFinished(bool)));
+            QObject::connect( finder, SIGNAL(finished(bool,QString)), this, SLOT(on_processingFinished(bool,QString)));
             QObject::connect( finder, SIGNAL(itemFound(QString,bool)), this, SLOT(on_itemFound(QString,bool)));
             QObject::connect( finder, SIGNAL(signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
 
             QObject::connect( finder, SIGNAL(workRequested()), finderThread, SLOT(start()));
             QObject::connect( finderThread, SIGNAL(started()), finder, SLOT(findFiles())); // start searching
-            QObject::connect( finder, SIGNAL(finished(bool)), finderThread, SLOT(quit()),Qt::DirectConnection);
+            QObject::connect( finder, SIGNAL(finished(bool,QString)), finderThread, SLOT(quit()),Qt::DirectConnection);
 
             finder->requestWork();
         }
@@ -268,14 +268,21 @@ void MainWindow::on_setValue(int value, QString labelText)
     ui->statusLabel->setText(labelText);
 }
 
-void MainWindow::on_processingFinished(bool isSuccess)
+void MainWindow::on_processingFinished(bool isSuccess, QString information)
 {
     setEnabled(false);
     if (isSuccess) {
         if(settingsDialog->isTurnOn) {
             player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
+            player -> setVolume( 50);
             player -> play();
             }
+        QMessageBox info;
+        info.setWindowIcon(QIcon(":/images/images/logo.png"));
+        info.setIcon(QMessageBox::Information);
+        info.setText(information);
+        info.setWindowTitle("Informacja");
+        info.exec();
     }
     else {
         ui->listWidget->clear();

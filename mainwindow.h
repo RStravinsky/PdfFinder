@@ -37,7 +37,7 @@ private slots:
     void on_searchButton_clicked();
     void on_itemFound(QString itemName, bool isFound);
     void on_setValue(int value, QString labelText);
-    void on_processingFinished(bool isSuccess);
+    void on_processingFinished(bool isSuccess, QString information);
 
 private:
     Ui::MainWindow *ui;
