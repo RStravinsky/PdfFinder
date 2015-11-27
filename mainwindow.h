@@ -10,6 +10,7 @@
 #include <settingsdialog.h>
 #include <QMediaPlayer>
 #include <QFutureWatcher>
+#include <QThread>
 
 #include <stddef.h>
 #include <finder.h>
@@ -36,15 +37,17 @@ private slots:
     void on_searchButton_clicked();
     void on_itemFound(QString itemName, bool isFound);
     void on_setValue(int value, QString labelText);
+    void on_processingFinished(bool isSuccess);
 
 private:
     Ui::MainWindow *ui;
 
-    QString schedulePath{};
-    bool processing{false};
+    QThread * finderThread{nullptr};
     QMediaPlayer * player{nullptr};
     SettingsDialog * settingsDialog{nullptr};
-    Finder * f{nullptr};
+    Finder * finder{nullptr};
+    QString schedulePath{};
+    bool processing{false};
 
     enum readType
     {
@@ -61,10 +64,7 @@ private:
     QString getPathFromFile(readType type);
     void savePathToFile();
     void fillPaths();
-
     void setEnabled(bool isEnabled);
-
-
 };
 
 #endif // MAINWINDOW_H

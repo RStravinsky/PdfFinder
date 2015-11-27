@@ -1,13 +1,29 @@
 #include "finder.h"
 
-Finder::Finder(QString folderPath, QObject *parent) :m_folder(folderPath), QObject(parent)
+Finder::Finder(QString folderPath, QString schedulePath, QObject *parent) :m_folder(folderPath),m_schedulePath(schedulePath), QObject(parent)
 {
-
+    m_working = false;
+    m_abort = false;
 }
 
-void Finder::findFiles(const QString schedulePath)
+void Finder::abort()
 {
-    loadFileList(schedulePath);
+    if (m_working) {
+        m_abort = true;
+        qDebug()<<"Request worker aborting in Thread "<<thread()->currentThreadId();
+    }
+}
+
+void Finder::requestWork()
+{
+    m_working = true;
+    m_abort = false;
+    emit workRequested();
+}
+
+void Finder::findFiles()
+{
+    if(!loadFileList())return;
 
     int count{};
     for(int i=0; i<m_fileList.size(); ++i)
@@ -16,12 +32,19 @@ void Finder::findFiles(const QString schedulePath)
         QDirIterator dirIt(m_folder, QDirIterator::Subdirectories);
         while (dirIt.hasNext())
         {
+
+            bool abort = m_abort;
+            if (abort) {
+                m_working = false;
+                emit finished(false);
+                return;
+            }
+
             dirIt.next();
             if (QFileInfo(dirIt.filePath()).isFile()) {
                 if (dirIt.fileName() == m_fileList.at(i)) {
                     isFound = true;
                     emit itemFound(m_fileList.at(i),true);
-                    qApp->processEvents();
                     break;
                 }
             }
@@ -34,15 +57,16 @@ void Finder::findFiles(const QString schedulePath)
                                  "Kopiowanie plików: " + QString::number(count++) + "/" + QString::number(m_fileList.size()));
         }
     }
+
+    m_working = false;
+    emit finished(true);
 }
 
-void Finder::loadFileList(const QString schedulePath)
+bool Finder::loadFileList()
 {
-
     emit signalProgress(100, "Wczytywanie harmonogramu ...");
-    qApp->processEvents();
 
-    QXlsx::Document schedule(schedulePath);
+    QXlsx::Document schedule(m_schedulePath);
     int lastRow = 0;
     QString currentCellNumber;
 
@@ -55,6 +79,13 @@ void Finder::loadFileList(const QString schedulePath)
 
     for (int row=7; row<65000; ++row)
     {
+        bool abort = m_abort;
+        if (abort) {
+            m_working = false;
+            emit finished(false);
+            return false;
+        }
+
         if(QXlsx::Cell *cell=schedule.cellAt(row, 6))
         {
             if(cell->value() == QVariant("Masa"))
@@ -67,6 +98,13 @@ void Finder::loadFileList(const QString schedulePath)
 
     for (int row=7; row<=lastRow; ++row)
     {
+        bool abort = m_abort;
+        if (abort) {
+            m_working = false;
+            emit finished(false);
+            return false;
+        }
+
         if (QXlsx::Cell *cell=schedule.cellAt(row, 3))
         {
             if(cell->format().patternBackgroundColor().toRgb() == nocolor && !cell->value().toString().isEmpty())
@@ -98,8 +136,9 @@ void Finder::loadFileList(const QString schedulePath)
         }
 
         emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
-        //qApp->processEvents();
     }
+
+    return true;
 }
 
 

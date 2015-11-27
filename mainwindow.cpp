@@ -17,12 +17,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
 
     fillPaths();
-
-
 }
 
 MainWindow::~MainWindow()
 {
+    if(finder!=nullptr) {
+        finder->abort();
+        finderThread->wait();
+        delete finderThread;
+        delete finder;
+    }
+
     delete ui;
 }
 
@@ -128,7 +133,7 @@ void MainWindow::setEnabled(bool isEnabled)
         ui->searchButton->setText("ANULUJ");
         ui->searchButton->setIcon(QIcon(":/images/images/clear.png"));
     }
-    else {
+    else {   
         processing = false;
         ui->inputLineEdit->setEnabled(true);
         ui->outputLineEdit->setEnabled(true);
@@ -183,6 +188,7 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 {
     if( mainButton == ui->addButton )
     {
+        qApp->processEvents();
         schedulePath = getSchedulePath();
         if ( !schedulePath.isEmpty() ) {
             QStringList pathList  = schedulePath.split("/");
@@ -219,25 +225,33 @@ void MainWindow::on_searchButton_clicked()
         if (!missingPaths.isEmpty())
             QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
         else {
-
             setEnabled(true);
 
-            f = new Finder(ui->inputLineEdit->text(),this);
-            QObject::connect( f,SIGNAL(itemFound(QString,bool)),this,SLOT(on_itemFound(QString,bool)));
-            QObject::connect( f, SIGNAL( signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
-            f->findFiles(schedulePath);
+            if(finder!=nullptr) delete finder;
+            if(finderThread!=nullptr) delete finderThread;
+            finder = new Finder(ui->inputLineEdit->text(),schedulePath);
+            finderThread = new QThread();
+            finder->moveToThread(finderThread);
 
-            setEnabled(false);
+            QObject::connect( finder, SIGNAL(finished(bool)), this, SLOT(on_processingFinished(bool)));
+            QObject::connect( finder, SIGNAL(itemFound(QString,bool)), this, SLOT(on_itemFound(QString,bool)));
+            QObject::connect( finder, SIGNAL(signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
 
-            if(settingsDialog->isTurnOn) {
-                player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
-                player -> play();
-                }
+            QObject::connect( finder, SIGNAL(workRequested()), finderThread, SLOT(start()));
+            QObject::connect( finderThread, SIGNAL(started()), finder, SLOT(findFiles())); // start searching
+            QObject::connect( finder, SIGNAL(finished(bool)), finderThread, SLOT(quit()),Qt::DirectConnection);
+
+            finder->requestWork();
         }
     }
 
     else { // clear button
-        qDebug() << "CLEAR..." << endl;;
+        finder->abort();
+        finderThread->wait();
+        delete finderThread;
+        delete finder;
+        finder = nullptr;
+        finderThread = nullptr;
     }
 }
 
@@ -252,6 +266,22 @@ void MainWindow::on_setValue(int value, QString labelText)
 {
     ui->progressBar->setValue(value);
     ui->statusLabel->setText(labelText);
+}
+
+void MainWindow::on_processingFinished(bool isSuccess)
+{
+    setEnabled(false);
+    if (isSuccess) {
+        if(settingsDialog->isTurnOn) {
+            player -> setMedia( QUrl("qrc:/images/images/success.mp3") );
+            player -> play();
+            }
+    }
+    else {
+        ui->listWidget->clear();
+        ui->statusLabel->clear();
+        ui->progressBar->setValue(0);
+    }
 }
 
 
