@@ -30,8 +30,8 @@ void Finder::findFiles()
     if(!loadFileList())return;
     bool isFound;
     QStringList missingFiles;
+    QStringList copiedFiles;
     int count{};
-    qDebug() << m_searchedFolder << endl;
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -42,6 +42,7 @@ void Finder::findFiles()
 
             bool abort = m_abort;
             if (abort) {
+                removeCopiedFiles(copiedFiles);
                 m_working = false;
                 emit finished(false);
                 return;
@@ -51,7 +52,9 @@ void Finder::findFiles()
             if (QFileInfo(dirIt.filePath()).isFile()) {
                 if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0) {
                     isFound = true;
-                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renameFile(i, QFileInfo(dirIt.filePath()).fileName()));
+                    QString renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
+                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renamedFile);
+                    copiedFiles << renamedFile;
                     emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
                     break;
                 }
@@ -164,6 +167,17 @@ QString Finder::renameFile(int num, QString fileName)
         resultName = QString::number(num) + QString("_") + fileName;
 
     return resultName;
+}
+
+void Finder::removeCopiedFiles(QStringList &copiedFiles)
+{
+    uint count{};
+    for(auto & fileToRemove: copiedFiles) {
+        QFile file(m_targetFolder + "/" + fileToRemove);
+        file.remove();
+        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
+                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
+    }
 }
 
 QString Finder::generateCSV(QStringList &missingFiles)

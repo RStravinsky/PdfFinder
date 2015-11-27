@@ -5,8 +5,6 @@
 #include <QtXlsx>
 #include <QDir>
 #include <QDirIterator>
-#include <QMessageBox>
-#include <QTimer>
 #include <QThread>
 
 class Finder : public QObject
@@ -28,12 +26,14 @@ public slots:
 
 private:
     bool loadFileList();
+    QString generateCSV(QStringList & missingFiles);
+    void removeCopiedFiles(QStringList & copiedFiles);
     QString renameFile(int num, QString fileName);
+
     QStringList m_fileList;
     QString m_schedulePath;
     QString m_searchedFolder;
     QString m_targetFolder;
-    QString generateCSV(QStringList & missingFiles);
     bool m_abort;
     bool m_working;
 };

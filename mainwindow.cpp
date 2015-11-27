@@ -207,6 +207,12 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
         settingsDialog->exec();
     }
 
+    else if ( mainButton == ui->helpButton )
+    {
+//        QFile file(ui->outputLineEdit->text() + "/" + "00_SR-357.00.00.00-2.1.pdf");
+//        file.remove();
+    }
+
 }
 
 void MainWindow::on_searchButton_clicked()
@@ -246,7 +252,7 @@ void MainWindow::on_searchButton_clicked()
     }
 
     else { // clear button
-        finder->abort();
+        finder->abort();;
         finderThread->wait();
         delete finderThread;
         delete finder;
