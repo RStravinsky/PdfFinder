@@ -133,7 +133,7 @@ void MainWindow::setEnabled(bool isEnabled)
         ui->inputLineEdit->setEnabled(false);
         ui->outputLineEdit->setEnabled(false);
         ui->searchButton->setText("ANULUJ");
-        ui->searchButton->setIcon(QIcon(":/images/images/wait.png"));
+        ui->searchButton->setIcon(QIcon(":/images/images/clear.png"));
     }
     else {   
         processing = false;
@@ -161,7 +161,7 @@ QString MainWindow::getOutputPath()
 QString MainWindow::getSchedulePath()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
-    if(!schedulePath.isEmpty()) return schedulePath;
+    if(!schedulePath.isEmpty() && path.isEmpty()) return schedulePath;
     else return path;
 }
 
