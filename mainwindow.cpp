@@ -133,7 +133,7 @@ void MainWindow::setEnabled(bool isEnabled)
         ui->inputLineEdit->setEnabled(false);
         ui->outputLineEdit->setEnabled(false);
         ui->searchButton->setText("ANULUJ");
-        ui->searchButton->setIcon(QIcon(":/images/images/clear.png"));
+        ui->searchButton->setIcon(QIcon(":/images/images/wait.png"));
     }
     else {   
         processing = false;

@@ -17,5 +17,6 @@
         <file>images/monica.png</file>
         <file>images/upArrow.png</file>
         <file>images/merge.png</file>
+        <file>images/wait.png</file>
     </qresource>
 </RCC>

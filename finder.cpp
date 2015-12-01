@@ -23,6 +23,9 @@ void Finder::findFiles()
     QStringList copiedFiles;
     QString renamedFile;
 
+    QDir saveDir(m_targetFolder);
+    saveDir.mkdir("Pliki_PDF");
+
     for(int i=0; i<m_fileList.size(); ++i)
     {
         isFound = false;
@@ -41,7 +44,7 @@ void Finder::findFiles()
                 if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0) {
                     isFound = true;
                     renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
-                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renamedFile);
+                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
                     copiedFiles << renamedFile;
                     emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
                     break;
@@ -155,13 +158,15 @@ QString Finder::renameFile(int num, QString fileName)
 
 void Finder::removeCopiedFiles(QStringList &copiedFiles)
 {
-    uint count{};
-    for(auto & fileToRemove: copiedFiles) {
-        QFile file(m_targetFolder + "/" + fileToRemove);
-        file.remove();
-        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
-                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
-    }
+//    uint count{};
+//    for(auto & fileToRemove: copiedFiles) {
+//        QFile file(m_targetFolder + "/Pliki_PDF/" + fileToRemove);
+//        file.remove();
+//        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
+//                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
+//    }
+    emit signalProgress(100, "Usuwanie plików ...");
+    QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
 QString Finder::generateCSV(QStringList &missingFiles)

@@ -7,6 +7,10 @@ MergeDialog::MergeDialog(QWidget *parent, QString savePath) :
     ui(new Ui::MergeDialog)
 {
     ui->setupUi(this);
+    if(m_savePath.isEmpty())
+        m_savePath = QDir::homePath();
+    else
+        m_savePath = m_savePath+"/Pliki_PDF";
 }
 
 MergeDialog::~MergeDialog()
@@ -16,43 +20,42 @@ MergeDialog::~MergeDialog()
 
 void MergeDialog::on_buttonName_clicked()
 {
-    const QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+    m_fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
                                tr("Pliki PDF (*.pdf)"));
-    QStringList namePathList = fileName.split("/");
+    QStringList namePathList = m_fileName.split("/");
     ui->nameLineEdit->setText(namePathList.at(namePathList.size()-1));
-}
-
-void MergeDialog::on_buttonPath_clicked()
-{
-    if(m_savePath.isEmpty())
-        m_savePath = QDir::homePath();
-    const QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), m_savePath );
-    ui->pathLineEdit->setText(path);
-    ui->pathLineEdit->setCursorPosition(0);
 }
 
 void MergeDialog::on_buttonOk_clicked()
 {
-    if(ui->nameLineEdit->text().isEmpty() || ui->pathLineEdit->text().isEmpty())
-                QMessageBox::information(this,tr("Informacja"),tr("Pola tekstowe są nieuzupełnione."));
+    qApp->processEvents();
+    if(ui->nameLineEdit->text().isEmpty())
+                QMessageBox::information(this,tr("Informacja"),tr("Pole tekstowe jest nieuzupełnione."));
 
     else {
-        m_mergeList = QFileDialog::getOpenFileNames(this, tr("Wybierz folder"), QString(m_savePath), tr("Pliki PDF (*.pdf)"));
+        m_mergeList = QFileDialog::getOpenFileNames(this, tr("Wybierz pliki"), QString(m_savePath), tr("Pliki PDF (*.pdf)"));
+
         if(m_mergeList.size() != 0) {
+
+
             QString filesToMerge;
             for (QStringList::iterator it = m_mergeList.begin(); it != m_mergeList.end(); ++it) {
                    QString current = *it;
-                   filesToMerge += current + " ";
+                   filesToMerge += "\"" + current + "\" ";
                }
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
-                               +ui->pathLineEdit->text()+"/"
-                               +ui->nameLineEdit->text()+
+            ghostScript->start("gswin64c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+                               +m_fileName+
                                " -dBATCH "+filesToMerge+"");
-            if(ghostScript->waitForFinished())
+
+            ui->buttonOk->setText("Proszę czekać");
+            ui->buttonOk->setIcon(QIcon(":/images/images/wait.png"));
+            ui->progressBar->setValue(100);
+            while(ghostScript->waitForFinished()) {
                 delete ghostScript;
+            }
 
             QMessageBox::information(this,tr("Informacja"),tr("Pliki zostały scalone."));
             MergeDialog::accept();
@@ -60,4 +63,9 @@ void MergeDialog::on_buttonOk_clicked()
         else
             return;
     }
+}
+
+void MergeDialog::raise()
+{
+    ui->progressBar->setValue(100);
 }
