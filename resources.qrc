@@ -10,9 +10,12 @@
         <file>images/search.png</file>
         <file>images/downArrow.png</file>
         <file>images/success.mp3</file>
-        <file>images/found.ico</file>
-        <file>images/notfound.ico</file>
         <file>images/magnifier.png</file>
         <file>images/clear.png</file>
+        <file>images/found.png</file>
+        <file>images/notfound.png</file>
+        <file>images/monica.png</file>
+        <file>images/upArrow.png</file>
+        <file>images/merge.png</file>
     </qresource>
 </RCC>

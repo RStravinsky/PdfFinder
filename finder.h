@@ -12,14 +12,12 @@ class Finder : public QObject
     Q_OBJECT
 public:
     explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder);
-    void requestWork();
     void abort();
 
 signals:
     void itemFound(QString itemName, bool isFound);
     void signalProgress(int, QString);
     void finished(bool,QString = "");
-    void workRequested();
 
 public slots:
     void findFiles();
@@ -35,7 +33,7 @@ private:
     QString m_searchedFolder;
     QString m_targetFolder;
     bool m_abort;
-    bool m_working;
+    QThread * scheduleThread;
 };
 
 #endif // FINDER_H

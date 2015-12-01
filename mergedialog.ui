@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SettingsDialog</class>
- <widget class="QDialog" name="SettingsDialog">
+ <class>MergeDialog</class>
+ <widget class="QDialog" name="MergeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,120 +23,116 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Ustawienia</string>
+   <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#SettingsDialog { background: &quot;gray&quot; }</string>
+   <string notr="true">#MergeDialog { background: &quot;gray&quot; }</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLineEdit" name="nameLineEdit">
    <property name="geometry">
     <rect>
-     <x>8</x>
+     <x>10</x>
      <y>20</y>
-     <width>251</width>
-     <height>20</height>
+     <width>215</width>
+     <height>22</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
+   <property name="styleSheet">
+    <string notr="true">QLineEdit {
+    font-size: 9pt; 
+    color: &quot;gray&quot;;
+    font-family: &quot;Arial&quot;;
+	border-radius: 5px;
+    border-width: 2px solid lightgray;
+}</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>Dodaj nazwę pliku</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="pathLineEdit">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>215</width>
+     <height>22</height>
+    </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">QLineEdit {
+    font-size: 9pt; 
+    color: &quot;gray&quot;;
+    font-family: &quot;Arial&quot;;
+	border-radius: 5px;
+    border-width: 2px solid lightgray;
+}</string>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Sygnał dzwiękowy po zakończeniu:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string/>
    </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>Dodaj ścieżkę zapisu</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox">
+  <widget class="QPushButton" name="buttonPath">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>230</x>
      <y>50</y>
-     <width>191</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>9</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QComboBox {
-color: &quot;gray&quot;;
-border-radius: 5px;
-border: 1px solid lightgray;
-background: &quot;white&quot;;
-}
-
-QComboBox::drop-down{
-subcontrol-origin: padding;
-subcontrol-position: center right;
-right: 2px;
-border-width: 0px;
-}
-
-QComboBox:hover {
-background: &quot;lightgray&quot;;
-color: &quot;white&quot;;
-width: 300px;
-}
-
-QComboBox:pressed {
-border: 1px solid &quot;gray&quot;;
-background: #A9A9A9 ;
-}
-
-QComboBox::down-arrow{
- image: url(:/images/images/downArrow.png);
- height: 50px;
- width:  50px;
-}
-
-
-</string>
-   </property>
-   <item>
-    <property name="text">
-     <string>TAK</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>NIE</string>
-    </property>
-   </item>
-  </widget>
-  <widget class="QPushButton" name="okButton">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>80</y>
-     <width>71</width>
-     <height>31</height>
+     <width>23</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
 color: &quot;gray&quot;;
-border-radius: 5px;
 border: 1px solid lightgray;
+border-radius: 5px;
 background: &quot;white&quot;;
 }
 
 QPushButton:hover {
 background: &quot;lightgray&quot;;
 color: &quot;white&quot;;
-width: 300px;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonOk">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>80</y>
+     <width>93</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border: 1px solid lightgray;
+border-radius: 5px;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
 }
 
 QPushButton:pressed {
@@ -149,27 +145,26 @@ background: #A9A9A9 ;
     <string>OK</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="cancelButton">
+  <widget class="QPushButton" name="buttonName">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>80</y>
-     <width>71</width>
-     <height>31</height>
+     <x>230</x>
+     <y>20</y>
+     <width>23</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
 color: &quot;gray&quot;;
-border-radius: 5px;
 border: 1px solid lightgray;
+border-radius: 5px;
 background: &quot;white&quot;;
 }
 
 QPushButton:hover {
 background: &quot;lightgray&quot;;
 color: &quot;white&quot;;
-width: 300px;
 }
 
 QPushButton:pressed {
@@ -179,7 +174,7 @@ background: #A9A9A9 ;
 </string>
    </property>
    <property name="text">
-    <string>Anuluj</string>
+    <string>...</string>
    </property>
   </widget>
  </widget>

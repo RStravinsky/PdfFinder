@@ -10,13 +10,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->settingsButton->installEventFilter(this);
     ui->helpButton->installEventFilter(this);
     ui->exitButton->installEventFilter(this);
+    ui->mergeButton->installEventFilter(this);
 
     settingsDialog = new SettingsDialog(this,true);
     player = new QMediaPlayer(this);
 
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
-
     fillPaths();
+
+    ui->monicaLabel->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -70,7 +72,7 @@ QString MainWindow::getPathFromFile(readType type)
     QFile pathFile(projectPath+"/PATH.txt");
 
     if (!pathFile.open(QIODevice::ReadOnly)) {
-            QMessageBox::information(this, "Informacja", "Ścieżka nie odczytana poprawnie\n.ERROR: can't open PATH.txt");
+            QMessageBox::information(this, "Informacja", "Ścieżka nie odczytana poprawnie.\nERROR: can't open PATH.txt");
             return QString(QDir::homePath());
         }
 
@@ -94,7 +96,7 @@ void MainWindow::savePathToFile()
     QFile pathFile(projectPath+"/PATH.txt");
 
     if (!pathFile.open(QIODevice::WriteOnly)) {
-            QMessageBox::information(this, "Informacja", "Ścieżka nie zapisana poprawnie\n. ERROR: can't open PATH.txt");
+            QMessageBox::information(this, "Informacja", "Ścieżka nie zapisana poprawnie.\nERROR: can't open PATH.txt");
             return;
         }
 
@@ -158,8 +160,9 @@ QString MainWindow::getOutputPath()
 
 QString MainWindow::getSchedulePath()
 {
-    QString schedulePath = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
-    return schedulePath;
+    QString path = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
+    if(!schedulePath.isEmpty()) return schedulePath;
+    else return path;
 }
 
 void MainWindow::on_inputButton_released()
@@ -209,8 +212,11 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
     else if ( mainButton == ui->helpButton )
     {
-//        QFile file(ui->outputLineEdit->text() + "/" + "00_SR-357.00.00.00-2.1.pdf");
-//        file.remove();
+    }
+
+    else if ( mainButton == ui->mergeButton ) {
+        MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
+        mergeDialog->exec();
     }
 
 }
@@ -218,6 +224,14 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 void MainWindow::on_searchButton_clicked()
 {
     if(!processing) { // search button
+
+        /* Easter egg */
+        static bool active = true;
+        if( ui->inputLineEdit->text()=="pizze chce") {
+            ui->monicaLabel->setVisible(active);
+            active = !active;
+            return;
+        }
 
         QStringList missingPaths;
 
@@ -239,36 +253,35 @@ void MainWindow::on_searchButton_clicked()
             if(finder!=nullptr) delete finder;
             if(finderThread!=nullptr) delete finderThread;
             finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text());
-            finderThread = new QThread();
+            finderThread = new QThread;
             finder->moveToThread(finderThread);
 
             QObject::connect( finder, SIGNAL(finished(bool,QString)), this, SLOT(on_processingFinished(bool,QString)));
             QObject::connect( finder, SIGNAL(itemFound(QString,bool)), this, SLOT(on_itemFound(QString,bool)));
             QObject::connect( finder, SIGNAL(signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
 
-            QObject::connect( finder, SIGNAL(workRequested()), finderThread, SLOT(start()));
             QObject::connect( finderThread, SIGNAL(started()), finder, SLOT(findFiles())); // start searching
             QObject::connect( finder, SIGNAL(finished(bool,QString)), finderThread, SLOT(quit()),Qt::DirectConnection);
 
-            finder->requestWork();
+            finderThread->start();
         }
     }
 
     else { // clear button
-        finder->abort();;
+        finder->abort();
         finderThread->wait();
         delete finderThread;
         delete finder;
         finder = nullptr;
         finderThread = nullptr;
+
     }
 }
 
 void MainWindow::on_itemFound(QString itemName, bool isFound)
 {
-    if(isFound) ui->listWidget->addItem(new QListWidgetItem(QIcon(":/images/images/found.ico"),itemName));
-    else ui->listWidget->addItem(new QListWidgetItem(QIcon(":/images/images/notfound.ico"),itemName));
-    ui->listWidget->scrollToBottom();
+    if(isFound) ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/found.png"),itemName));
+    else ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/notfound.png"),itemName));
 }
 
 void MainWindow::on_setValue(int value, QString labelText)
@@ -286,6 +299,7 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
             player -> setVolume( 50);
             player -> play();
             }
+
         QMessageBox info;
         info.setWindowIcon(QIcon(":/images/images/logo.png"));
         info.setIcon(QMessageBox::Information);
@@ -299,6 +313,8 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
         ui->progressBar->setValue(0);
     }
 }
+
+
 
 
 

@@ -18,14 +18,17 @@ CONFIG += debug
 SOURCES += main.cpp\
      mainwindow.cpp \
      settingsdialog.cpp \
-     finder.cpp
+     finder.cpp \
+    mergedialog.cpp
 
 HEADERS  += mainwindow.h \
       settingsdialog.h \
-      finder.h
+      finder.h \
+    mergedialog.h
 
 FORMS    += mainwindow.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    mergedialog.ui
 
 RESOURCES += \
     resources.qrc
