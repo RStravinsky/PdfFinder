@@ -31,8 +31,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>8</x>
-     <y>20</y>
+     <x>5</x>
+     <y>2</y>
      <width>251</width>
      <height>20</height>
     </rect>
@@ -40,7 +40,7 @@
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -58,16 +58,16 @@
   <widget class="QComboBox" name="comboBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>50</y>
-     <width>191</width>
-     <height>21</height>
+     <x>10</x>
+     <y>30</y>
+     <width>242</width>
+     <height>22</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -119,11 +119,17 @@ QComboBox::down-arrow{
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>80</y>
-     <width>71</width>
-     <height>31</height>
+     <x>10</x>
+     <y>60</y>
+     <width>115</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
@@ -148,15 +154,25 @@ background: #A9A9A9 ;
    <property name="text">
     <string>OK</string>
    </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/found.png</normaloff>:/images/images/found.png</iconset>
+   </property>
   </widget>
   <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>80</y>
-     <width>71</width>
-     <height>31</height>
+     <x>135</x>
+     <y>60</y>
+     <width>115</width>
+     <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
@@ -181,8 +197,14 @@ background: #A9A9A9 ;
    <property name="text">
     <string>Anuluj</string>
    </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/clear.png</normaloff>:/images/images/clear.png</iconset>
+   </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

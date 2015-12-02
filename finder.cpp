@@ -187,7 +187,7 @@ QString Finder::generateCSV(QStringList &missingFiles)
 
         information = "Przeszukiwanie zakończone. Brakujące pozycje znajdują się w pliku:\n"
                       + m_targetFolder + "/" + scheduleName + "_BRAK.csv."
-                      + "\nSkopiowano: " + QString::number(m_fileList.size() - missingFiles.size() + 1) + "/"
+                      + "\nSkopiowano: " + QString::number(m_fileList.size() - missingFiles.size()) + "/"
                       + QString::number(m_fileList.size()) + " plików.";
     }
     else

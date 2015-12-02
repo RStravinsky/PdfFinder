@@ -65,7 +65,4 @@ void MergeDialog::on_buttonOk_clicked()
     }
 }
 
-void MergeDialog::raise()
-{
-    ui->progressBar->setValue(100);
-}
+
