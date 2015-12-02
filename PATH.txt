@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 C:/Users/BPokrzywa/Desktop/SR-357.00.00.00;C:/Users/BPokrzywa/Desktop/WARIAT
+=======
+//k1/napps/NAPPS;//k1/napps/NAPPS
+>>>>>>> 30696e8f73009b946c564ea56eee52b4ae178f98

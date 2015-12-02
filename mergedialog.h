@@ -23,7 +23,6 @@ public:
 private slots:
     void on_buttonName_clicked();
     void on_buttonOk_clicked();
-    void raise();
 
 private:
     Ui::MergeDialog *ui;
