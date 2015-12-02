@@ -10,6 +10,18 @@
     <height>531</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>630</width>
+    <height>531</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>630</width>
+    <height>531</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>PDF Finder</string>
   </property>
@@ -18,7 +30,47 @@
     <normaloff>:/images/images/icon.ico</normaloff>:/images/images/icon.ico</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QListWidget {
+  background-color: &quot;white&quot;;
+  font-size: 10pt;
+  color: &quot;gray&quot;;
+  font-size: 9pt;
+  font-family: &quot;Arial&quot;;
+  border-radius: 5px;
+  border-width: 2px solid lightgray;
+}
+
+#centralWidget QScrollBar:vertical {
+  border: none;
+  background: &quot;transparent&quot;;
+  width: 15px;
+  margin: 20px 0px 20px 0px;
+}
+
+#centralWidget QScrollBar::handle:vertical {
+  background: &quot;lightgray&quot;;
+  min-height: 20px;
+  border-radius: 2px;
+}
+
+#centralWidget QScrollBar::add-line:vertical {
+  image: url(:/images/images/downArrow.png);
+  background: &quot;lightgray&quot;;
+  height: 15px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+  border-radius: 2px;
+}
+
+#centralWidget QScrollBar::sub-line:vertical {
+  image: url(:/images/images/upArrow.png);
+  background: &quot;lightgray&quot;;
+  height: 15px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
+  border-radius: 2px;
+}
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
@@ -145,16 +197,13 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QListWidget {
-    background-color: &quot;white&quot;;
-    font-size: 10pt;
-    color: &quot;gray&quot;;
-    font-size: 9pt;
-    font-family: &quot;Arial&quot;;
-	border-radius: 5px;
-    border-width: 2px solid lightgray;
-}
-</string>
+     <string notr="true"/>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="Line" name="line">
@@ -565,9 +614,9 @@ background: #A9A9A9 ;
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>75</x>
+      <x>50</x>
       <y>110</y>
-      <width>171</width>
+      <width>131</width>
       <height>81</height>
      </rect>
     </property>
@@ -603,7 +652,7 @@ background: #A9A9A9 ;
         </font>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ffffff;&quot;&gt;Dodaj harmonogram&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Harmonogram&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -615,9 +664,9 @@ background: #A9A9A9 ;
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>257</x>
+      <x>187</x>
       <y>110</y>
-      <width>91</width>
+      <width>101</width>
       <height>81</height>
      </rect>
     </property>
@@ -666,57 +715,9 @@ background: #A9A9A9 ;
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>400</x>
       <y>110</y>
-      <width>91</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="helpLayout">
-     <item>
-      <widget class="QPushButton" name="helpButton">
-       <property name="styleSheet">
-        <string notr="true">border: none;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/images/images/help.png</normaloff>:/images/images/help.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>48</width>
-         <height>48</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="helpLabel">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ffffff;&quot;&gt;Pomoc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>482</x>
-      <y>110</y>
-      <width>71</width>
+      <width>81</width>
       <height>81</height>
      </rect>
     </property>
@@ -765,7 +766,7 @@ background: #A9A9A9 ;
       <x>20</x>
       <y>195</y>
       <width>591</width>
-      <height>21</height>
+      <height>25</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -859,6 +860,133 @@ font-weight: bold;
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="monicaLabel">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>410</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/images/images/monica.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>110</y>
+      <width>101</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="helpLayout">
+     <item>
+      <widget class="QPushButton" name="helpButton">
+       <property name="contextMenuPolicy">
+        <enum>Qt::NoContextMenu</enum>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/images/images/help.png</normaloff>:/images/images/help.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="helpLabel">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ffffff;&quot;&gt;Pomoc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>110</y>
+      <width>71</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="mergeLayout">
+     <item>
+      <widget class="QPushButton" name="mergeButton">
+       <property name="styleSheet">
+        <string notr="true">border: none;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/images/images/merge.png</normaloff>:/images/images/merge.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="mergeLabel">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:600; color:#ffffff;&quot;&gt;Scal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>topFrame</zorder>
+   <zorder>listWidget</zorder>
+   <zorder>line</zorder>
+   <zorder>searchButton</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>bottomFrame</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>statusLabel</zorder>
+   <zorder>label</zorder>
+   <zorder>monicaLabel</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

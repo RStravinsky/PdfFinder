@@ -6,23 +6,13 @@ Finder::Finder(QObject *parent, QString schedulePath, QString searchedFolder, QS
     m_searchedFolder(searchedFolder),
     m_targetFolder(targetFolder)
 {
-    m_working = false;
     m_abort = false;
 }
 
 void Finder::abort()
 {
-    if (m_working) {
-        m_abort = true;
-        qDebug()<<"Request worker aborting in Thread "<<thread()->currentThreadId();
-    }
-}
-
-void Finder::requestWork()
-{
-    m_working = true;
-    m_abort = false;
-    emit workRequested();
+    m_abort = true;
+    qDebug()<<"Request worker aborting in Thread "<<thread()->currentThreadId();
 }
 
 void Finder::findFiles()
@@ -40,6 +30,10 @@ void Finder::findFiles()
     bool isFound;
     QStringList missingFiles;
     QStringList copiedFiles;
+    QString renamedFile;
+
+    QDir saveDir(m_targetFolder);
+    saveDir.mkdir("Pliki_PDF");
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -50,7 +44,6 @@ void Finder::findFiles()
             bool abort = m_abort;
             if (abort) {
                 removeCopiedFiles(copiedFiles);
-                m_working = false;
                 emit finished(false);
                 return;
             }
@@ -59,8 +52,8 @@ void Finder::findFiles()
             if (QFileInfo(dirIt.filePath()).isFile()) {
                 if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0) {
                     isFound = true;
-                    QString renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
-                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renamedFile);
+                    renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
+                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
                     copiedFiles << renamedFile;
                     emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
                     break;
@@ -75,12 +68,11 @@ void Finder::findFiles()
         }
 
         emit signalProgress( int((double(i+1)/double(m_fileList.size())*100))+1,
-                             "Przeszukiwanie plików: " + QString::number(i+1) + "/" + QString::number(m_fileList.size()));
+                             "Przeszukiwanie plików: " + QString::number(i+1) + "/" +
+                             QString::number(m_fileList.size()));
     }
 
     QString information = generateCSV(missingFiles);
-
-    m_working = false;
     emit finished(true,information);
 }
 
@@ -110,7 +102,6 @@ bool Finder::loadFileList()
     {
         bool abort = m_abort;
         if (abort) {
-            m_working = false;
             emit finished(false);
             return false;
         }
@@ -129,7 +120,6 @@ bool Finder::loadFileList()
     {
         bool abort = m_abort;
         if (abort) {
-            m_working = false;
             emit finished(false);
             return false;
         }
@@ -185,7 +175,7 @@ bool Finder::checkSchedule(QXlsx::Document &schedule)
 
 QString Finder::renameFile(int num, QString fileName)
 {
-    QString resultName;
+    QString resultName{""};
 
     if(num < 10)
         resultName = QString::number(0) + QString::number(num) + QString("_") + fileName;
@@ -195,21 +185,24 @@ QString Finder::renameFile(int num, QString fileName)
     return resultName;
 }
 
+
 void Finder::removeCopiedFiles(QStringList &copiedFiles)
 {
-    uint count{};
-    for(auto & fileToRemove: copiedFiles) {
-        QFile file(m_targetFolder + "/" + fileToRemove);
-        file.remove();
-        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
-                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
-    }
+//    uint count{};
+//    for(auto & fileToRemove: copiedFiles) {
+//        QFile file(m_targetFolder + "/Pliki_PDF/" + fileToRemove);
+//        file.remove();
+//        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
+//                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
+//    }
+    emit signalProgress(100, "Usuwanie plików ...");
+    QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
 QString Finder::generateCSV(QStringList &missingFiles)
 {
     QString scheduleName = QFileInfo(m_schedulePath).fileName().split(".").at(0);
-    QString information;
+    QString information{""};
 
     if(missingFiles.size() != 0)
     {
@@ -222,11 +215,14 @@ QString Finder::generateCSV(QStringList &missingFiles)
         file.close();
         }
 
-        information = "Kopiowanie zakończone. Brakujące pozycje znajdują się w pliku:\n" + m_targetFolder + "/" + scheduleName + "_BRAK.csv";
+        information = "Przeszukiwanie zakończone. Brakujące pozycje znajdują się w pliku:\n"
+                      + m_targetFolder + "/" + scheduleName + "_BRAK.csv."
+                      + "\nSkopiowano: " + QString::number(m_fileList.size() - missingFiles.size() + 1) + "/"
+                      + QString::number(m_fileList.size()) + " plików.";
     }
     else
     {
-        information = "Kopiowanie zakończone. Wszystkie pliki zostały znalezione.\n";
+        information = "Przeszukiwanie zakończone.\nSkopiowano: " + QString::number(missingFiles.size()) + " plików.";
     }
 
     return information;

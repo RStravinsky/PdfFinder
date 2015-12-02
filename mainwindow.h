@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <finder.h>
 #include <settingsdialog.h>
+#include <mergedialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,7 @@ private:
     Ui::MainWindow *ui;
 
     QThread * finderThread{nullptr};
+    QThread * listWidgetThread{nullptr};
     QMediaPlayer * player{nullptr};
     SettingsDialog * settingsDialog{nullptr};
     Finder * finder{nullptr};
