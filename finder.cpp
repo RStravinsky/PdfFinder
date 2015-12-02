@@ -35,77 +35,22 @@ void Finder::findFiles()
         return;
     }
 
-
-//    for(int i=0; i<fileList.size(); ++i)
-//    {
-//        isFound = false;
-
-//        QDirIterator dirIt(m_searchedFolder, QDirIterator::Subdirectories);
-//        while (dirIt.hasNext())
-//        {
-//            bool abort = m_abort;
-//            if (abort) {
-//                removeCopiedFiles();
-//                emit finished(false);
-//                return;
-//            }
-
-//            dirIt.next();
-//            if (QFileInfo(dirIt.filePath()).isFile()) {
-//                if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0) {
-//                    isFound = true;
-//                    renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
-//                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
-//                    copiedFiles << renamedFile;
-//                    emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
-//                    break;
-//                }
-//            }
-//        }
-
-
-//        if(!isFound)
-//        {
-//            emit itemFound(m_fileList.at(i),false);
-//            missingFiles << m_fileList.at(i);
-//        }
-
-//        emit signalProgress( int((double(i+1)/double(m_fileList.size())*100))+1,
-//                             "Przeszukiwanie plików: " + QString::number(i+1) + "/" +
-//                             QString::number(m_fileList.size()));
-//    }
-
-    QDir dir(m_searchedFolder);
-    dir.setFilter(QDir::Files);
-    QStringList filters;
-    filters.append("*.pdf");
-    dir.setNameFilters(filters);
+    QDir dir(m_searchedFolder, QString("*.pdf"), QDir::NoSort, QDir::Files);
     QDirIterator dirIt(dir, QDirIterator::Subdirectories);
-
     filesCounter = 0;
     while (dirIt.hasNext()) {
             filesCounter++;
             dirIt.next();
     }
 
-    copiedFiles = searchFolder(m_searchedFolder);
+    QStringList copiedFilesAmount;
+    copiedFiles = searchFolder(m_searchedFolder,copiedFilesAmount);
 
-
-
-    //for( auto & i: m_fileList) {
-
-    //}
-
-
-    //qDebug() << copiedFiles.size();
-    //qDebug() << missingFiles.size();
-
-   // QString information = generateCSV(missingFiles);
-    emit finished(true,"mordakowski");
+    QString information = generateCSV(copiedFilesAmount);
+    emit finished(true,information);
 }
 
-
-QStringList Finder::searchFolder(QString path)
+QStringList Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
 {
     QDir dir(path);
     QStringList filesList;
@@ -122,17 +67,18 @@ QStringList Finder::searchFolder(QString path)
                 renamedFile = renameFile(indexList.at(i).toInt(), QFileInfo(dir, file).fileName());
                 QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
                 emit itemFound(QFileInfo(dir, file).fileName(), true);
-
                 emit signalProgress( int((double(count+1)/double(filesCounter)*100))+1,
-                                     "Przeszukiwanie plików: " + QString::number(count+1) + "/" +
-                                     QString::number(filesCounter));
-                count++;
+                                 "Przeszukiwanie plików: " + QString::number(count+1) + "/" +
+                                 QString::number(filesCounter));
+                copiedFilesAmount.append(QFileInfo(dir, file).fileName());
             }
         }
+
+        count++;
     }
 
     foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            filesList << searchFolder(path + QDir::separator() + subDir);
+            filesList << searchFolder(path + QDir::separator() + subDir, copiedFilesAmount);
 
     return filesList;
 
@@ -273,30 +219,30 @@ void Finder::removeCopiedFiles()
     QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
-QString Finder::generateCSV(QStringList &missingFiles)
+QString Finder::generateCSV(QStringList copiedFilesAmount)
 {
     QString scheduleName = QFileInfo(m_schedulePath).fileName().split(".").at(0);
     QString information{""};
 
-    if(missingFiles.size() != 0)
+    if(copiedFilesAmount.size() != 0)
     {
         QFile file(m_targetFolder + "/" + scheduleName + "_BRAK.csv");
         if (file.open(QFile::WriteOnly|QFile::Truncate))
         {
         QTextStream stream(&file);
-        for(int i=0; i<missingFiles.size(); ++i)
-            stream << missingFiles.at(i) << "\n"; // this writes first line with two columns
+        for(int i=0; i<copiedFilesAmount.size(); ++i)
+            stream << copiedFilesAmount.at(i) << "\n"; // this writes first line with two columns
         file.close();
         }
 
         information = "Przeszukiwanie zakończone. Brakujące pozycje znajdują się w pliku:\n"
                       + m_targetFolder + "/" + scheduleName + "_BRAK.csv."
-                      + "\nSkopiowano: " + QString::number(m_fileList.size() - missingFiles.size()) + "/"
+                      + "\nSkopiowano: " + QString::number(copiedFilesAmount.size()) + "/"
                       + QString::number(m_fileList.size()) + " plików.";
     }
     else
     {
-        information = "Przeszukiwanie zakończone.\nSkopiowano: " + QString::number(missingFiles.size()) + " plików.";
+        information = "Przeszukiwanie zakończone.\nSkopiowano: " + QString::number(copiedFilesAmount.size()) + " plików.";
     }
 
     return information;

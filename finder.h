@@ -26,7 +26,7 @@ private:
         int filesCounter;
     bool loadFileList();
     bool checkSchedule(QXlsx::Document & schedule);
-    QString generateCSV(QStringList & missingFiles);
+    QString generateCSV(QStringList copiedFilesAmount);
     void removeCopiedFiles();
     QString renameFile(int num, QString fileName);
 
@@ -37,7 +37,7 @@ private:
     bool m_abort;
     QThread * scheduleThread;
 
-    QStringList searchFolder(QString path);
+    QStringList searchFolder(QString path, QStringList &copiedFilesAmount);
     QStringList getFileListIdx(QString fileName);
 };
 

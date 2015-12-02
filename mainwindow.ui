@@ -864,9 +864,9 @@ font-weight: bold;
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>410</y>
-      <width>31</width>
-      <height>31</height>
+      <y>60</y>
+      <width>391</width>
+      <height>381</height>
      </rect>
     </property>
     <property name="text">
