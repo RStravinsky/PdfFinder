@@ -37,6 +37,7 @@ private:
     QThread * scheduleThread;
 
     QStringList searchFolder(QString path);
+    QStringList getFileListIdx(QString fileName);
 };
 
 #endif // FINDER_H

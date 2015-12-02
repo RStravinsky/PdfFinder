@@ -80,17 +80,16 @@ void Finder::findFiles()
 
 
 
-    for( auto & i: m_fileList) {
+    //for( auto & i: m_fileList) {
 
-        if();
-    }
+    //}
 
 
-    qDebug() << copiedFiles.size();
-    qDebug() << missingFiles.size();
+    //qDebug() << copiedFiles.size();
+    //qDebug() << missingFiles.size();
 
-    QString information = generateCSV(missingFiles);
-    emit finished(true,information);
+   // QString information = generateCSV(missingFiles);
+    emit finished(true,"mordakowski");
 }
 
 
@@ -99,20 +98,23 @@ QStringList Finder::searchFolder(QString path)
     QDir dir(path);
     QStringList filesList;
     QString renamedFile;
-    uint i = 0;
-    uint mflCounter = 0;
+    QStringList indexList;
+
 
     foreach (QString file, dir.entryList(QStringList("*.pdf"), QDir::Files)) {
 
         if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {
 
-            mflCounter = m_fileList.indexOf(QFileInfo(dir, file).fileName(), mflCounter);
+        indexList = getFileListIdx(QFileInfo(dir, file).fileName());
 
-            filesList << QFileInfo(dir, file).absoluteFilePath();
-            renamedFile = renameFile(mflCounter, QFileInfo(dir, file).fileName());
+            for(int i = 0; i < indexList.size(); ++i) {
+                renamedFile = renameFile(indexList.at(i).toInt(), QFileInfo(dir, file).fileName());
+                QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
+                emit itemFound(QFileInfo(dir, file).fileName(), true);
+                //filesList << QFileInfo(dir,file);
+            }
 
-            QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
-            emit itemFound(QFileInfo(dir, file).fileName(), true);
+
         }
 
     }
@@ -122,6 +124,18 @@ QStringList Finder::searchFolder(QString path)
 
     return filesList;
 
+}
+
+QStringList Finder::getFileListIdx(QString fileName)
+{
+    QStringList idxList;
+
+    for(int i = 0; i < m_fileList.size(); ++i) {
+        if(m_fileList.at(i) == fileName)
+            idxList << QString::number(i);
+    }
+
+    return idxList;
 }
 
 bool Finder::loadFileList()
