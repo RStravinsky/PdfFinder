@@ -27,11 +27,19 @@ void Finder::requestWork()
 
 void Finder::findFiles()
 {
-    if(!loadFileList())return;
+    bool isFileListLoaded = loadFileList();
+
+    if(!isFileListLoaded)return;
+
+    if(isFileListLoaded && m_fileList.size() == 0) {
+        emit finished(false, "Nie znaleziono plików w harmonogramie.");
+        return;
+    }
+
+
     bool isFound;
     QStringList missingFiles;
-    int count{};
-    qDebug() << m_searchedFolder << endl;
+    QStringList copiedFiles;
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -39,9 +47,9 @@ void Finder::findFiles()
         QDirIterator dirIt(m_searchedFolder, QDirIterator::Subdirectories);
         while (dirIt.hasNext())
         {
-
             bool abort = m_abort;
             if (abort) {
+                removeCopiedFiles(copiedFiles);
                 m_working = false;
                 emit finished(false);
                 return;
@@ -51,7 +59,9 @@ void Finder::findFiles()
             if (QFileInfo(dirIt.filePath()).isFile()) {
                 if (QString::compare(QFileInfo(dirIt.filePath()).fileName(), m_fileList.at(i), Qt::CaseInsensitive) == 0) {
                     isFound = true;
-                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renameFile(i, QFileInfo(dirIt.filePath()).fileName()));
+                    QString renamedFile = renameFile(i, QFileInfo(dirIt.filePath()).fileName());
+                    QFile::copy(QFileInfo(dirIt.filePath()).filePath(), m_targetFolder + "/" + renamedFile);
+                    copiedFiles << renamedFile;
                     emit itemFound(QFileInfo(dirIt.filePath()).fileName(),true);
                     break;
                 }
@@ -63,11 +73,9 @@ void Finder::findFiles()
             emit itemFound(m_fileList.at(i),false);
             missingFiles << m_fileList.at(i);
         }
-        else {
-            emit signalProgress( int((double(i)/double(m_fileList.size())*100))+1,
-                                 "Kopiowanie plików: " + QString::number(count++) + "/" + QString::number(m_fileList.size()));
 
-        }
+        emit signalProgress( int((double(i+1)/double(m_fileList.size())*100))+1,
+                             "Przeszukiwanie plików: " + QString::number(i+1) + "/" + QString::number(m_fileList.size()));
     }
 
     QString information = generateCSV(missingFiles);
@@ -81,6 +89,13 @@ bool Finder::loadFileList()
     emit signalProgress(100, "Wczytywanie harmonogramu ...");
 
     QXlsx::Document schedule(m_schedulePath);
+
+    if(!checkSchedule(schedule)) {
+        emit finished(false, "Harmonogram niepoprawny.");
+        return false;
+    }
+
+
     int lastRow = 0;
     QString currentCellNumber;
 
@@ -154,6 +169,20 @@ bool Finder::loadFileList()
     return true;
 }
 
+bool Finder::checkSchedule(QXlsx::Document &schedule)
+{
+    QString orderDigit = schedule.cellAt(6, 2)->value().toString();
+    QString drawingNr = schedule.cellAt(6, 3)->value().toString();
+    QString cooperator = schedule.cellAt(6, 10)->value().toString();
+
+    if( orderDigit.contains("L.p.") && drawingNr.contains("Nr rys.") && cooperator.contains("Kooperant") )
+        return true;
+    else
+        return false;
+}
+
+
+
 QString Finder::renameFile(int num, QString fileName)
 {
     QString resultName;
@@ -164,6 +193,17 @@ QString Finder::renameFile(int num, QString fileName)
         resultName = QString::number(num) + QString("_") + fileName;
 
     return resultName;
+}
+
+void Finder::removeCopiedFiles(QStringList &copiedFiles)
+{
+    uint count{};
+    for(auto & fileToRemove: copiedFiles) {
+        QFile file(m_targetFolder + "/" + fileToRemove);
+        file.remove();
+        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
+                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
+    }
 }
 
 QString Finder::generateCSV(QStringList &missingFiles)

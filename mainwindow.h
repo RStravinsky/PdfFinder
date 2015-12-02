@@ -3,17 +3,15 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
-#include "finder.h"
 #include <QDir>
 #include <QFileDialog>
 #include <QDebug>
-#include <settingsdialog.h>
 #include <QMediaPlayer>
-#include <QFutureWatcher>
 #include <QThread>
 
 #include <stddef.h>
 #include <finder.h>
+#include <settingsdialog.h>
 
 namespace Ui {
 class MainWindow;
