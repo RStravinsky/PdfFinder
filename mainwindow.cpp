@@ -73,7 +73,7 @@ QString MainWindow::getPathFromFile(readType type)
 
     if (!pathFile.open(QIODevice::ReadOnly)) {
             QMessageBox::information(this, "Informacja", "Ścieżka nie odczytana poprawnie.\nERROR: can't open PATH.txt");
-            return QString(QDir::homePath());
+            return QString("//K1/napps/NAPPS");
         }
 
     QTextStream out(&pathFile);
@@ -86,7 +86,7 @@ QString MainWindow::getPathFromFile(readType type)
     }
 
     pathFile.close();
-    return readPath == "" ? QString(QDir::homePath()) : readPath;
+    return readPath == "" ? QString("//K1/napps/NAPPS") : readPath;
 }
 
 void MainWindow::savePathToFile()
@@ -109,17 +109,17 @@ void MainWindow::fillPaths()
 {
     QString path = getPathFromFile(INIT);
 
-    if( path == QString(QDir::homePath())){
+    if( path == QString("//K1/napps/NAPPS") ){
         ui->inputLineEdit->setText(path);
         ui->outputLineEdit->setText(path);
     }
     else {
         QStringList pathList = path.split(";");
 
-        if( pathList.at(0).isEmpty()) ui->inputLineEdit->setText(QString(QDir::homePath()));
+        if( pathList.at(0).isEmpty()) ui->inputLineEdit->setText(QString("//K1/napps/NAPPS"));
         else ui->inputLineEdit->setText(pathList.at(0));
 
-        if( pathList.at(1).isEmpty()) ui->outputLineEdit->setText(QString(QDir::homePath()));
+        if( pathList.at(1).isEmpty()) ui->outputLineEdit->setText(QString("//K1/napps/NAPPS"));
         else ui->outputLineEdit->setText(pathList.at(1));
     }
 }
@@ -239,19 +239,16 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
         layout.addWidget(&message, 0, 0, 1 , 1, Qt::AlignLeft);
         layout.addWidget(&okButton, 1, 0, 1, 1, Qt::AlignRight);
 
-
         QObject::connect(&okButton,SIGNAL(released()),&helpDialog,SLOT(close()));
 
         helpDialog.setLayout(&layout);
         helpDialog.exec();
-
     }
 
     else if ( mainButton == ui->mergeButton ) {
         MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
         mergeDialog->exec();
     }
-
 }
 
 void MainWindow::on_searchButton_clicked()
@@ -334,7 +331,6 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
             player -> setVolume( 50);
             player -> play();
             }
-
         QMessageBox info;
         info.setWindowIcon(QIcon(":/images/images/logo.png"));
         info.setIcon(QMessageBox::Information);
@@ -355,7 +351,6 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
             emptyListMessage.setWindowTitle("Informacja");
             emptyListMessage.exec();
         }
-
     }
 }
 

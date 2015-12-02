@@ -26,7 +26,7 @@ private:
     bool loadFileList();
     bool checkSchedule(QXlsx::Document & schedule);
     QString generateCSV(QStringList & missingFiles);
-    void removeCopiedFiles(QStringList & copiedFiles);
+    void removeCopiedFiles();
     QString renameFile(int num, QString fileName);
 
     QStringList m_fileList;

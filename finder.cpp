@@ -26,14 +26,15 @@ void Finder::findFiles()
         return;
     }
 
-
     bool isFound;
     QStringList missingFiles;
     QStringList copiedFiles;
     QString renamedFile;
 
-    QDir saveDir(m_targetFolder);
-    saveDir.mkdir("Pliki_PDF");
+    if(!QDir(m_targetFolder).mkdir("Pliki_PDF")) {
+        emit finished(false, "Nie można utworzyć folderu na pliki do skopiowania.");
+        return;
+    }
 
     for(int i=0; i<m_fileList.size(); ++i)
     {
@@ -43,7 +44,7 @@ void Finder::findFiles()
         {
             bool abort = m_abort;
             if (abort) {
-                removeCopiedFiles(copiedFiles);
+                removeCopiedFiles();
                 emit finished(false);
                 return;
             }
@@ -61,8 +62,7 @@ void Finder::findFiles()
             }
         }
 
-        if(!isFound)
-        {
+        if(!isFound) {
             emit itemFound(m_fileList.at(i),false);
             missingFiles << m_fileList.at(i);
         }
@@ -86,7 +86,6 @@ bool Finder::loadFileList()
         emit finished(false, "Harmonogram niepoprawny.");
         return false;
     }
-
 
     int lastRow = 0;
     QString currentCellNumber;
@@ -186,15 +185,8 @@ QString Finder::renameFile(int num, QString fileName)
 }
 
 
-void Finder::removeCopiedFiles(QStringList &copiedFiles)
+void Finder::removeCopiedFiles()
 {
-//    uint count{};
-//    for(auto & fileToRemove: copiedFiles) {
-//        QFile file(m_targetFolder + "/Pliki_PDF/" + fileToRemove);
-//        file.remove();
-//        emit signalProgress( int((double(count)/double(copiedFiles.size())*100))+1,
-//                             "Usuwanie plików: " + QString::number(count++) + "/" + QString::number(copiedFiles.size()));
-//    }
     emit signalProgress(100, "Usuwanie plików ...");
     QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
