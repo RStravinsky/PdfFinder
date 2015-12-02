@@ -24,6 +24,7 @@ public slots:
 
 private:
     bool loadFileList();
+    bool checkSchedule(QXlsx::Document & schedule);
     QString generateCSV(QStringList & missingFiles);
     void removeCopiedFiles(QStringList & copiedFiles);
     QString renameFile(int num, QString fileName);

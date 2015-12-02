@@ -212,6 +212,39 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
 
     else if ( mainButton == ui->helpButton )
     {
+
+        QDialog helpDialog;
+        QPushButton okButton;
+        QLabel message;
+        QGridLayout layout;
+
+        helpDialog.setStyleSheet("QDialog {background-color: gray; color: white; font: 12px;}"
+                              "QPushButton { color: gray; border-radius: 5px; border: 1px solid lightgray; background: white; width: 71px; height: 31px;}"
+                              "QPushButton:hover { background: lightgray; color: white; width: 71px; height: 31px;}"
+                              "QPushButton:pressed {border: 1px solid gray; background: #A9A9A9; width: 71px; height: 31px;}"
+                              );
+        okButton.setText("OK");
+
+        QString text = "<font color='white' size=3 face='Arial'><b>Wszelkie pytania proszę wysyłać na adres:</b></font> <br><br> <a href=\"mailto:rafal.strawinski@sigmasa.pl \">rafal.strawinski@sigmasa.pl</a> <br> <a href=\"mailto:bartlomiej.pokrzywa@sigmasa.pl\">bartlomiej.pokrzywa@sigmasa.pl</a>";
+        message.setTextFormat(Qt::RichText);
+        message.setText(text);
+        message.setOpenExternalLinks(true);
+
+        helpDialog.setFixedSize(262, 121);
+        helpDialog.setWindowIcon(QIcon(":/images/images/logo.png"));
+        helpDialog.setWindowTitle("Pomoc");
+        helpDialog.setWindowFlags((helpDialog.windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowContextHelpButtonHint);
+
+
+        layout.addWidget(&message, 0, 0, 1 , 1, Qt::AlignLeft);
+        layout.addWidget(&okButton, 1, 0, 1, 1, Qt::AlignRight);
+
+
+        QObject::connect(&okButton,SIGNAL(released()),&helpDialog,SLOT(close()));
+
+        helpDialog.setLayout(&layout);
+        helpDialog.exec();
+
     }
 
     else if ( mainButton == ui->mergeButton ) {
@@ -280,8 +313,10 @@ void MainWindow::on_searchButton_clicked()
 
 void MainWindow::on_itemFound(QString itemName, bool isFound)
 {
+
     if(isFound) ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/found.png"),itemName));
     else ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/notfound.png"),itemName));
+
 }
 
 void MainWindow::on_setValue(int value, QString labelText)
@@ -311,6 +346,16 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
         ui->listWidget->clear();
         ui->statusLabel->clear();
         ui->progressBar->setValue(0);
+
+        if(!information.isEmpty()) {
+            QMessageBox emptyListMessage;
+            emptyListMessage.setWindowIcon(QIcon(":/images/images/logo.png"));
+            emptyListMessage.setIcon(QMessageBox::Information);
+            emptyListMessage.setText(information);
+            emptyListMessage.setWindowTitle("Informacja");
+            emptyListMessage.exec();
+        }
+
     }
 }
 

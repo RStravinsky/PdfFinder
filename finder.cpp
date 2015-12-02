@@ -17,7 +17,16 @@ void Finder::abort()
 
 void Finder::findFiles()
 {
-    if(!loadFileList())return;
+    bool isFileListLoaded = loadFileList();
+
+    if(!isFileListLoaded)return;
+
+    if(isFileListLoaded && m_fileList.size() == 0) {
+        emit finished(false, "Nie znaleziono plików w harmonogramie.");
+        return;
+    }
+
+
     bool isFound;
     QStringList missingFiles;
     QStringList copiedFiles;
@@ -72,6 +81,13 @@ bool Finder::loadFileList()
     emit signalProgress(100, "Wczytywanie harmonogramu ...");
 
     QXlsx::Document schedule(m_schedulePath);
+
+    if(!checkSchedule(schedule)) {
+        emit finished(false, "Harmonogram niepoprawny.");
+        return false;
+    }
+
+
     int lastRow = 0;
     QString currentCellNumber;
 
@@ -142,6 +158,20 @@ bool Finder::loadFileList()
 
     return true;
 }
+
+bool Finder::checkSchedule(QXlsx::Document &schedule)
+{
+    QString orderDigit = schedule.cellAt(6, 2)->value().toString();
+    QString drawingNr = schedule.cellAt(6, 3)->value().toString();
+    QString cooperator = schedule.cellAt(6, 10)->value().toString();
+
+    if( orderDigit.contains("L.p.") && drawingNr.contains("Nr rys.") && cooperator.contains("Kooperant") )
+        return true;
+    else
+        return false;
+}
+
+
 
 QString Finder::renameFile(int num, QString fileName)
 {
