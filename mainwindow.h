@@ -65,6 +65,7 @@ private:
     void savePathToFile();
     void fillPaths();
     void setEnabled(bool isEnabled);
+
 };
 
 #endif // MAINWINDOW_H
