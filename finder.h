@@ -38,8 +38,8 @@ private:
     bool m_abort;
     QThread * scheduleThread;
 
-    QStringList makeMissingFiles(QStringList &copiedFilesAmount);
-    bool searchFolder(QString path, QStringList &copiedFilesAmount);
+    QStringList checkMissingFiles(QStringList &copiedFilesList);
+    void searchFolder(QString path, QStringList &copiedFilesList);
     QStringList getFileListIdx(QString fileName);
 };
 
