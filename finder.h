@@ -37,9 +37,10 @@ private:
     QString m_targetFolder;
     bool m_abort;
     QThread * scheduleThread;
+    int count;
 
     QStringList checkMissingFiles(QStringList &copiedFilesList);
-    void searchFolder(QString path, QStringList &copiedFilesList);
+    bool searchFolder(QString path, QStringList &copiedFilesList);
     QStringList getFileListIdx(QString fileName);
 };
 
