@@ -172,6 +172,7 @@ void MainWindow::on_inputButton_released()
     QString inputPath = getInputPath();
     if ( !inputPath.isEmpty() ) {
         ui->inputLineEdit->setText(inputPath);
+        ui->inputLineEdit->setCursorPosition(0);
         savePathToFile();
     }
 }
@@ -183,6 +184,7 @@ void MainWindow::on_outputButton_released()
     QString outputPath = getOutputPath();
     if ( !outputPath.isEmpty() ) {
         ui->outputLineEdit->setText(outputPath);
+        ui->outputLineEdit->setCursorPosition(0);
         savePathToFile();
     }
 }
