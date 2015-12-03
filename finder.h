@@ -23,10 +23,10 @@ public slots:
     void findFiles();
 
 private:
-        int filesCounter;
+    int filesCounter;
     bool loadFileList();
     bool checkSchedule(QXlsx::Document & schedule);
-    QString generateCSV(QStringList copiedFilesAmount);
+    QString generateCSV(QStringList &copiedFilesAmount);
     void removeCopiedFiles();
     QString renameFile(int num, QString fileName);
 
