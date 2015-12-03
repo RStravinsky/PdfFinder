@@ -25,17 +25,12 @@ void Finder::findFiles()
         return;
     }
 
-    //bool isFound;
-    //QStringList missingFiles;
-    //QStringList copiedFiles;
-    //QString renamedFile;
-
     if(!QDir(m_targetFolder).mkdir("Pliki_PDF")) {
-        emit finished(false, "Nie można utworzyć folderu na pliki do skopiowania.");
+        emit finished(false, "Folder \"Pliki_PDF\" już istnieje.");
         return;
     }
 
-    QDir dir(m_searchedFolder, QString("*.pdf"), QDir::NoSort, QDir::Files);
+    QDir dir(m_searchedFolder, QString("*.pdf"), QDir::NoSort, QDir::Files | QDir::NoSymLinks);
     QDirIterator dirIt(dir, QDirIterator::Subdirectories);
     filesCounter = 0;
     while (dirIt.hasNext()) {
@@ -44,11 +39,13 @@ void Finder::findFiles()
     }
 
     QStringList copiedFilesAmount;
+    count = 0;
     if(!searchFolder(m_searchedFolder,copiedFilesAmount))
             return;
 
-    //QString information = generateCSV(copiedFilesAmount);
-    emit finished(true,"information");
+    QStringList missingFiless = makeMissingFiles(copiedFilesAmount);
+    QString information = generateCSV(missingFiless, copiedFilesAmount);
+    emit finished(true,information);
 }
 
 bool Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
@@ -56,10 +53,11 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
     QDir dir(path);
     QString renamedFile;
     QStringList indexList;
-    static int count = 0;
+    QStringList filter;
+    filter << "*.pdf";
 
 
-    foreach (QString file, dir.entryList(QStringList("*.pdf"), QDir::Files)) {
+    foreach (QString file, dir.entryList(filter, QDir::Files | QDir::NoSymLinks)) {
 
         bool abort = m_abort;
         if (abort) {
@@ -82,16 +80,19 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
 
                 }
 
-                emit signalProgress( int((double(count+1)/double(filesCounter)*100))+1,
-                                 "Przeszukiwanie plików: " + QString::number(count+1) + "/" +
-                                 QString::number(filesCounter));
-            }
+            } 
+
         }
         count++;
+
+        emit signalProgress( int((double(count)/double(filesCounter)*100)),
+                         "Przeszukiwanie plików: " + QString::number(count) + "/" +
+                         QString::number(filesCounter));
     }
 
-    foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+    foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
             searchFolder(path + QDir::separator() + subDir, copiedFilesAmount);
+    }
 
     return true;
 }
@@ -108,6 +109,22 @@ QStringList Finder::getFileListIdx(QString fileName)
     return idxList;
 }
 
+QStringList Finder::makeMissingFiles(QStringList &copiedFilesAmount)
+{
+    QStringList missingFilesList;
+
+    if(!copiedFilesAmount.isEmpty()) {
+        qSort(copiedFilesAmount.begin(),copiedFilesAmount.end());
+        for(auto it = m_fileList.begin(); it != m_fileList.end(); ++it) {
+            QStringList::iterator foundIt = qBinaryFind(copiedFilesAmount.begin(), copiedFilesAmount.end(), *it);
+            if( foundIt == copiedFilesAmount.end())
+                missingFilesList << *it;
+        }
+    }
+
+    return missingFilesList;
+}
+
 bool Finder::loadFileList()
 {
     emit signalProgress(100, "Wczytywanie harmonogramu ...");
@@ -122,7 +139,6 @@ bool Finder::loadFileList()
     int lastRow = 0;
     QString currentCellNumber;
 
-    //COLORS
     QColor nocolor;
     QColor orange; orange.setRgbF(1, 0.8, 0, 1);
     QColor orange2; orange2.setRgbF(1, 0.752941, 0, 1);
@@ -160,7 +176,7 @@ bool Finder::loadFileList()
             if(cell->format().patternBackgroundColor().toRgb() == nocolor && !cell->value().toString().isEmpty())
             {
                 m_fileList << cell->value().toString().trimmed() + ".pdf";
-                //qDebug() << schedule.cellAt(row, 2)->value().toString()  << m_fileList.back();
+
 
                 currentCellNumber = schedule.cellAt(row, 2)->value().toString();
 
@@ -170,7 +186,7 @@ bool Finder::loadFileList()
                     {
 
                         m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
-                        //qDebug() << schedule.cellAt(row, 2)->value().toString()  << m_fileList.back();
+
                     }
                 }
             }
@@ -179,7 +195,7 @@ bool Finder::loadFileList()
                 (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()))
             {
                 m_fileList << cell->value().toString().trimmed() + ".pdf";
-                //qDebug() << schedule.cellAt(row, 2)->value().toString()  << m_fileList.back();
+
             }
 
             if(cell->format().patternBackgroundColor().toRgb() == yellow &&
@@ -187,7 +203,7 @@ bool Finder::loadFileList()
                schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
             {
                 m_fileList << cell->value().toString().trimmed() + ".pdf";
-                //qDebug() << schedule.cellAt(row, 2)->value().toString() << m_fileList.back();
+
             }
         }
         emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
@@ -229,48 +245,32 @@ void Finder::removeCopiedFiles()
     QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
-QString Finder::generateCSV(QStringList &copiedFilesAmount)
+QString Finder::generateCSV(QStringList & missingFilesList, QStringList & copiedFilesList)
 {
-    QString scheduleName = QFileInfo(m_schedulePath).fileName().split(".").at(0);
-    QString information{""};
+    QString information{};
+    if(!missingFilesList.isEmpty()) {
 
-    if(!copiedFilesAmount.isEmpty()) {
-        QStringList missingFilesList;
-
-        for(auto it = m_fileList.begin(); it != m_fileList.end(); ++it)
-        {
-            auto foundIt = qFind(copiedFilesAmount,*it);
-            if( foundIt == copiedFilesAmount.end())
-            {
-                missingFilesList.append(*foundIt);
-            }
+        QString scheduleName = QFileInfo(m_schedulePath).fileName().split(".").at(0);
+        QFile file(m_targetFolder + "/" + scheduleName + "_BRAK.csv");
+        if (file.open(QFile::WriteOnly|QFile::Truncate)) {
+            QTextStream stream(&file);
+            for(int i=0; i<missingFilesList.size(); ++i)
+                stream << missingFilesList.at(i) << "\n"; // this writes first line with two columns
+            file.close();
         }
 
-        qDebug() << missingFilesList.size() << endl;
+        information = "Przeszukiwanie zakończone. Brakujące pozycje znajdują się w pliku:\n"
+                      + m_targetFolder + "/" + scheduleName + "_BRAK.csv."
+                      + "\nSkopiowano: " + QString::number(copiedFilesList.size()) + "/"
+                      + QString::number(m_fileList.size()) + " plików.";
     }
 
-//    if(copiedFilesAmount.size() != 0)
-//    {
-//        QFile file(m_targetFolder + "/" + scheduleName + "_BRAK.csv");
-//        if (file.open(QFile::WriteOnly|QFile::Truncate))
-//        {
-//        QTextStream stream(&file);
-//        for(int i=0; i<copiedFilesAmount.size(); ++i)
-//            stream << copiedFilesAmount.at(i) << "\n"; // this writes first line with two columns
-//        file.close();
-//        }
+    else
+        information = "Przeszukiwanie zakończone.\nSkopiowano: " + QString::number(m_fileList.size()) + " plików.";
 
-//        information = "Przeszukiwanie zakończone. Brakujące pozycje znajdują się w pliku:\n"
-//                      + m_targetFolder + "/" + scheduleName + "_BRAK.csv."
-//                      + "\nSkopiowano: " + QString::number(copiedFilesAmount.size()) + "/"
-//                      + QString::number(m_fileList.size()) + " plików.";
-//    }
-//    else
-//    {
-//        information = "Przeszukiwanie zakończone.\nSkopiowano: " + QString::number(copiedFilesAmount.size()) + " plików.";
-//    }
 
-//    return information;
+    return information;
+
 }
 
 

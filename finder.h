@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QThread>
+#include <QtAlgorithms>
 
 class Finder : public QObject
 {
@@ -26,7 +27,7 @@ private:
     int filesCounter;
     bool loadFileList();
     bool checkSchedule(QXlsx::Document & schedule);
-    QString generateCSV(QStringList &copiedFilesAmount);
+    QString generateCSV(QStringList &missingFilesList, QStringList &copiedFilesList);
     void removeCopiedFiles();
     QString renameFile(int num, QString fileName);
 
@@ -36,7 +37,9 @@ private:
     QString m_targetFolder;
     bool m_abort;
     QThread * scheduleThread;
+    int count;
 
+    QStringList makeMissingFiles(QStringList &copiedFilesAmount);
     bool searchFolder(QString path, QStringList &copiedFilesAmount);
     QStringList getFileListIdx(QString fileName);
 };
