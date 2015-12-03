@@ -37,7 +37,7 @@ private:
     bool m_abort;
     QThread * scheduleThread;
 
-    QStringList searchFolder(QString path, QStringList &copiedFilesAmount);
+    bool searchFolder(QString path, QStringList &copiedFilesAmount);
     QStringList getFileListIdx(QString fileName);
 };
 

@@ -25,10 +25,10 @@ void Finder::findFiles()
         return;
     }
 
-    bool isFound;
-    QStringList missingFiles;
-    QStringList copiedFiles;
-    QString renamedFile;
+    //bool isFound;
+    //QStringList missingFiles;
+    //QStringList copiedFiles;
+    //QString renamedFile;
 
     if(!QDir(m_targetFolder).mkdir("Pliki_PDF")) {
         emit finished(false, "Nie można utworzyć folderu na pliki do skopiowania.");
@@ -44,33 +44,38 @@ void Finder::findFiles()
     }
 
     QStringList copiedFilesAmount;
-    copiedFiles = searchFolder(m_searchedFolder,copiedFilesAmount);
+    if(!searchFolder(m_searchedFolder,copiedFilesAmount))
+        return;
 
     QString information = generateCSV(copiedFilesAmount);
     emit finished(true,information);
 }
 
-QStringList Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
+bool Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
 {
     QDir dir(path);
-    QStringList filesList;
     QString renamedFile;
     QStringList indexList;
-    int count = 0;
+    static int count = 0;
+
 
     foreach (QString file, dir.entryList(QStringList("*.pdf"), QDir::Files)) {
-        if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {
+        if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {    
 
         indexList = getFileListIdx(QFileInfo(dir, file).fileName());
 
             for(int i = 0; i < indexList.size(); ++i) {
                 renamedFile = renameFile(indexList.at(i).toInt(), QFileInfo(dir, file).fileName());
-                QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
-                emit itemFound(QFileInfo(dir, file).fileName(), true);
-                emit signalProgress( int((double(count+1)/double(filesCounter)*100))+1,
-                                 "Przeszukiwanie plików: " + QString::number(count+1) + "/" +
-                                 QString::number(filesCounter));
-                copiedFilesAmount.append(QFileInfo(dir, file).fileName());
+
+                if(!QFile(m_targetFolder + "/Pliki_PDF/" + renamedFile).exists()) {
+
+                    QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
+                    emit itemFound(QFileInfo(dir, file).fileName(), true);
+                    emit signalProgress( int((double(count+1)/double(filesCounter)*100))+1,
+                                     "Przeszukiwanie plików: " + QString::number(count+1) + "/" +
+                                     QString::number(filesCounter));
+                    copiedFilesAmount.append(QFileInfo(dir, file).fileName());
+                }
             }
         }
 
@@ -78,10 +83,9 @@ QStringList Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
     }
 
     foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            filesList << searchFolder(path + QDir::separator() + subDir, copiedFilesAmount);
+            searchFolder(path + QDir::separator() + subDir, copiedFilesAmount);
 
-    return filesList;
-
+    return true;
 }
 
 QStringList Finder::getFileListIdx(QString fileName)
