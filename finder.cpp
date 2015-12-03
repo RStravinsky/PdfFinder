@@ -44,7 +44,8 @@ void Finder::findFiles()
     }
 
     QStringList copiedFilesAmount;
-    copiedFiles = searchFolder(m_searchedFolder,copiedFilesAmount);
+    if(searchFolder(m_searchedFolder,copiedFilesAmount).isEmpty())
+        return;
 
     QString information = generateCSV(copiedFilesAmount);
     emit finished(true,information);
@@ -59,6 +60,14 @@ QStringList Finder::searchFolder(QString path, QStringList &copiedFilesAmount)
     int count = 0;
 
     foreach (QString file, dir.entryList(QStringList("*.pdf"), QDir::Files)) {
+
+        bool abort = m_abort;
+        if (abort) {
+            removeCopiedFiles();
+            emit finished(false);
+            return QStringList();
+        }
+
         if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {
 
         indexList = getFileListIdx(QFileInfo(dir, file).fileName());
