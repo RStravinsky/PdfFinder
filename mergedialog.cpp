@@ -52,9 +52,10 @@ void MergeDialog::on_buttonFiles_clicked()
             ui->buttonFiles->setIcon(QIcon(":/images/images/wait.png"));
             ui->buttonFiles->setText("");
             ui->progressBar->setValue(100);
-            while(ghostScript->waitForFinished()) {
-                delete ghostScript;
+            while(!ghostScript->waitForFinished()) {
+
             }
+            delete ghostScript;
 
             QMessageBox::information(this,tr("Informacja"),tr("Pliki zostały scalone."));
             MergeDialog::accept();
@@ -82,23 +83,28 @@ void MergeDialog::on_buttonFolder_clicked()
 
         if(m_mergeList.size() != 0) {
 
-            QString filesToMerge;
-            for (QStringList::iterator it = m_mergeList.begin(); it != m_mergeList.end(); ++it) {
-                   QString current = *it;
-                   filesToMerge += "\"" + current + "\" ";
-               }
+
+            QFile file(folderPath + "/list.txt");
+            if (file.open(QFile::WriteOnly|QFile::Truncate)) {
+                QTextStream stream(&file);
+                for(int i=0; i<m_mergeList.size(); ++i) {
+                    stream << "\"" + m_mergeList.at(i) + "\"" << "\n"; // this writes first line with two columns
+                }
+                file.close();
+
 
             QProcess * ghostScript = new QProcess(this);
             ghostScript->start("gswin64c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
-                               " -dBATCH "+filesToMerge+"");
+                               " -dBATCH @"+folderPath+"/list.txt");
 
             ui->buttonFolder->setIcon(QIcon(":/images/images/wait.png"));
             ui->buttonFolder->setText("");
             ui->progressBar->setValue(100);
-            while(ghostScript->waitForFinished()) {
-                delete ghostScript;
+            while(!ghostScript->waitForFinished()) {
+
             }
+            delete ghostScript;
 
             QMessageBox::information(this,tr("Informacja"),tr("Pliki zostały scalone."));
             MergeDialog::accept();
@@ -106,4 +112,5 @@ void MergeDialog::on_buttonFolder_clicked()
         else
             return;
     }
+   }
 }
