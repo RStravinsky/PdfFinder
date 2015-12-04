@@ -365,14 +365,10 @@ void MainWindow::on_whiteRadio_clicked(bool checked)
 {
     if(checked)
         isWhite = true;
-
-    qDebug() << "Is White?: " << isWhite << endl;
 }
 
 void MainWindow::on_blueRadio_clicked(bool checked)
 {
     if(checked)
         isWhite = false;
-
-    qDebug() << "Is White?: " << isWhite << endl;
 }
