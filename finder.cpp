@@ -36,10 +36,8 @@ void Finder::findFiles()
     QDirIterator dirIt(dir, QDirIterator::Subdirectories);
     filesCounter = 0;
     while (dirIt.hasNext()) {
-
             bool abort = m_abort;
             if (abort) {
-                removeCopiedFiles();
                 emit finished(false);
                 return;
             }
