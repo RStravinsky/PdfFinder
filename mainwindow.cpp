@@ -128,6 +128,8 @@ void MainWindow::setEnabled(bool isEnabled)
 {
     if(isEnabled) {
         processing = true;
+        ui->whiteRadio->setEnabled(false);
+        ui->blueRadio->setEnabled(false);
         ui->listWidget->clear();
         ui->label->setVisible(false);
         ui->inputLineEdit->setEnabled(false);
@@ -137,6 +139,8 @@ void MainWindow::setEnabled(bool isEnabled)
     }
     else {   
         processing = false;
+        ui->whiteRadio->setEnabled(true);
+        ui->blueRadio->setEnabled(true);
         ui->inputLineEdit->setEnabled(true);
         ui->outputLineEdit->setEnabled(true);
         ui->searchButton->setText("WYSZUKAJ");
@@ -357,7 +361,18 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
     }
 }
 
+void MainWindow::on_whiteRadio_clicked(bool checked)
+{
+    if(checked)
+        isWhite = true;
 
+    qDebug() << "Is White?: " << isWhite << endl;
+}
 
+void MainWindow::on_blueRadio_clicked(bool checked)
+{
+    if(checked)
+        isWhite = false;
 
-
+    qDebug() << "Is White?: " << isWhite << endl;
+}

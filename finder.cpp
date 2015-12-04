@@ -1,5 +1,7 @@
 #include "finder.h"
 
+#define DEBUG 1
+
 Finder::Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder) :
     QObject(parent),
     m_schedulePath(schedulePath),
@@ -30,13 +32,17 @@ void Finder::findFiles()
         return;
     }
 
+    emit signalProgress( 100, "Określenie liczby plików do przeszukania ...");
     QDir dir(m_searchedFolder, QString("*.pdf"), QDir::NoSort, QDir::Files | QDir::NoSymLinks);
     QDirIterator dirIt(dir, QDirIterator::Subdirectories);
     filesCounter = 0;
     while (dirIt.hasNext()) {
             filesCounter++;
             dirIt.next();
+
     }
+
+    emit signalProgress( 0, "Przeszukiwanie plików: = 0/" + QString::number(filesCounter));
 
     QStringList copiedFilesList;
     count = 0;
@@ -56,7 +62,6 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesList)
     QStringList indexList;
     QStringList filter;
     filter << "*.pdf";
-
 
     foreach (QString file, dir.entryList(filter, QDir::Files | QDir::NoSymLinks)) {
 
@@ -85,7 +90,6 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesList)
         emit signalProgress( int((double(count)/double(filesCounter)*100)),
                          "Przeszukiwanie plików: " + QString::number(count) + "/" +
                          QString::number(filesCounter));
-
     }
 
     foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
@@ -118,7 +122,6 @@ QStringList Finder::checkMissingFiles(QStringList &copiedFilesList)
             index++;
         }
     }
-
     return missingFilesList;
 }
 
@@ -167,7 +170,6 @@ bool Finder::loadFileList()
             emit finished(false);
             return false;
         }
-
         if (QXlsx::Cell *cell=schedule.cellAt(row, 3))
         {
             if(cell->format().patternBackgroundColor().toRgb() == nocolor && !cell->value().toString().isEmpty())
@@ -260,7 +262,6 @@ QString Finder::generateCSV(QStringList & missingFilesList)
                       + "\nSkopiowano: " + QString::number(m_fileList.size()-missingFilesList.size()) + "/"
                       + QString::number(m_fileList.size()) + " plików.";
     }
-
     else
         information = "Przeszukiwanie zakończone.\nSkopiowano wszystkie pliki.";
 
