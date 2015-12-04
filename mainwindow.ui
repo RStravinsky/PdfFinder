@@ -231,9 +231,9 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>430</x>
       <y>380</y>
-      <width>161</width>
+      <width>131</width>
       <height>61</height>
      </rect>
     </property>
@@ -285,7 +285,7 @@ background: #A9A9A9 ;
      <rect>
       <x>20</x>
       <y>382</y>
-      <width>421</width>
+      <width>401</width>
       <height>31</height>
      </rect>
     </property>
@@ -864,9 +864,9 @@ font-weight: bold;
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>60</y>
-      <width>391</width>
-      <height>381</height>
+      <y>420</y>
+      <width>51</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -972,6 +972,75 @@ font-weight: bold;
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>569</x>
+      <y>380</y>
+      <width>41</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>569</x>
+      <y>412</y>
+      <width>41</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;lightblue&quot;;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="whiteRadio">
+    <property name="geometry">
+     <rect>
+      <x>584</x>
+      <y>387</y>
+      <width>16</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="blueRadio">
+    <property name="geometry">
+     <rect>
+      <x>584</x>
+      <y>418</y>
+      <width>16</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>topFrame</zorder>
@@ -987,6 +1056,10 @@ font-weight: bold;
    <zorder>statusLabel</zorder>
    <zorder>label</zorder>
    <zorder>monicaLabel</zorder>
+   <zorder>label_2</zorder>
+   <zorder>label_3</zorder>
+   <zorder>whiteRadio</zorder>
+   <zorder>blueRadio</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

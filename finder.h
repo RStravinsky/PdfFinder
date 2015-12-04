@@ -12,7 +12,7 @@ class Finder : public QObject
 {
     Q_OBJECT
 public:
-    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder);
+    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite);
     void abort();
 
 signals:
@@ -35,6 +35,7 @@ private:
     QString m_schedulePath;
     QString m_searchedFolder;
     QString m_targetFolder;
+    bool m_isWhite;
     bool m_abort;
     QThread * scheduleThread;
     int count;
