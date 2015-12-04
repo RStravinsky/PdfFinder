@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this,SIGNAL(mainButtonReleased(const QPushButton*)),this,SLOT(on_mainButtonReleased(const QPushButton*)));
     fillPaths();
 
+    ui->outputLineEdit->setCursorPosition(0);
+    ui->inputLineEdit->setCursorPosition(0);
     ui->monicaLabel->setVisible(false);
 }
 

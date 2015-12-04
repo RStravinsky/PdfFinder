@@ -7,6 +7,7 @@
 #include <QDesktopServices>
 #include <QProcess>
 #include <QMessageBox>
+#include <QDirIterator>
 
 namespace Ui {
 class MergeDialog;
@@ -22,7 +23,8 @@ public:
 
 private slots:
     void on_buttonName_clicked();
-    void on_buttonOk_clicked();
+    void on_buttonFiles_clicked();
+    void on_buttonFolder_clicked();
 
 private:
     Ui::MergeDialog *ui;

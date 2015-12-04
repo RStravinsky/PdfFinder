@@ -18,5 +18,7 @@
         <file>images/upArrow.png</file>
         <file>images/merge.png</file>
         <file>images/wait.png</file>
+        <file>images/folder.png</file>
+        <file>images/pdf.png</file>
     </qresource>
 </RCC>

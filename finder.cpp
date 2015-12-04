@@ -37,17 +37,29 @@ void Finder::findFiles()
     QDirIterator dirIt(dir, QDirIterator::Subdirectories);
     filesCounter = 0;
     while (dirIt.hasNext()) {
+
+            bool abort = m_abort;
+            if (abort) {
+                removeCopiedFiles();
+                emit finished(false);
+                return;
+            }
+
             filesCounter++;
             dirIt.next();
-
     }
 
     emit signalProgress( 0, "Przeszukiwanie plików: = 0/" + QString::number(filesCounter));
 
     QStringList copiedFilesList;
     count = 0;
-    if(!searchFolder(m_searchedFolder,copiedFilesList))
+    if(!searchFolder(m_searchedFolder,copiedFilesList)) {
+            qDebug() << "BREAK" << endl;
+            emit finished(false);
             return;
+    }
+
+    qDebug() << "NOT BREAK" << endl;
 
     QStringList missedFiless = checkMissingFiles(copiedFilesList);
 
@@ -62,14 +74,15 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesList)
     QStringList indexList;
     QStringList filter;
     filter << "*.pdf";
+    static bool isAborted = true;
 
     foreach (QString file, dir.entryList(filter, QDir::Files | QDir::NoSymLinks)) {
 
         bool abort = m_abort;
         if (abort) {
             removeCopiedFiles();
-            emit finished(false);
-            return false;
+            isAborted = false;
+            return isAborted;
         }
 
         if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {
@@ -95,7 +108,7 @@ bool Finder::searchFolder(QString path, QStringList &copiedFilesList)
     foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
             searchFolder(path + QDir::separator() + subDir, copiedFilesList);
 
-    return true;
+    return isAborted;
 }
 
 QStringList Finder::getFileListIdx(QString fileName)

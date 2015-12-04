@@ -53,13 +53,13 @@
     <string>Nazwa scalonego pliku</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="buttonOk">
+  <widget class="QPushButton" name="buttonFiles">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>242</width>
-     <height>55</height>
+     <width>118</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -88,17 +88,20 @@ background: #A9A9A9 ;
 </string>
    </property>
    <property name="text">
-    <string>Wybierz pliki</string>
+    <string>Pliki *</string>
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/images/images/logo.png</normaloff>:/images/images/logo.png</iconset>
+     <normaloff>:/images/images/pdf.png</normaloff>:/images/images/pdf.png</iconset>
    </property>
    <property name="iconSize">
     <size>
-     <width>48</width>
-     <height>48</height>
+     <width>36</width>
+     <height>36</height>
     </size>
+   </property>
+   <property name="default">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="buttonName">
@@ -137,7 +140,7 @@ background: #A9A9A9 ;
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>102</y>
+     <y>97</y>
      <width>242</width>
      <height>10</height>
     </rect>
@@ -164,6 +167,76 @@ border: 1px solid black;
    </property>
    <property name="textVisible">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonFolder">
+   <property name="geometry">
+    <rect>
+     <x>133</x>
+     <y>40</y>
+     <width>118</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border: 1px solid lightgray;
+border-radius: 5px;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Folder</string>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/folder.png</normaloff>:/images/images/folder.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>42</width>
+     <height>42</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>108</y>
+     <width>161</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>7</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: &quot;lightgray&quot;</string>
+   </property>
+   <property name="text">
+    <string>* Maksymalnie 256 plików</string>
    </property>
   </widget>
  </widget>

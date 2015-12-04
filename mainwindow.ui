@@ -388,6 +388,15 @@ border-top-left-radius:10px;
             <bold>true</bold>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Scieżka przeszukiwania plików *.PDF</string>
+          </property>
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Ścieżka wyszukiwania:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -412,6 +421,18 @@ border-top-left-radius:10px;
             <family>Arial</family>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="whatsThis">
+           <string/>
           </property>
           <property name="autoFillBackground">
            <bool>false</bool>
@@ -518,6 +539,12 @@ background: #A9A9A9 ;
             <bold>true</bold>
            </font>
           </property>
+          <property name="toolTip">
+           <string>Ścieżka zapisu wyszukanych plików *.PDF</string>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Ścieżka zapisu:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -542,6 +569,9 @@ background: #A9A9A9 ;
             <family>Arial</family>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="whatsThis">
+           <string/>
           </property>
           <property name="autoFillBackground">
            <bool>false</bool>
@@ -623,6 +653,21 @@ background: #A9A9A9 ;
     <layout class="QVBoxLayout" name="addLayout">
      <item>
       <widget class="QPushButton" name="addButton">
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string/>
+       </property>
+       <property name="toolTipDuration">
+        <number>-1</number>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="styleSheet">
         <string notr="true">border: none;</string>
        </property>
@@ -676,6 +721,9 @@ background: #A9A9A9 ;
        <property name="contextMenuPolicy">
         <enum>Qt::NoContextMenu</enum>
        </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="styleSheet">
         <string notr="true">border: none;</string>
        </property>
@@ -715,7 +763,7 @@ background: #A9A9A9 ;
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>500</x>
       <y>110</y>
       <width>111</width>
       <height>81</height>
@@ -724,6 +772,9 @@ background: #A9A9A9 ;
     <layout class="QVBoxLayout" name="exitLayout">
      <item>
       <widget class="QPushButton" name="exitButton">
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="styleSheet">
         <string notr="true">border: none;</string>
        </property>
@@ -894,6 +945,9 @@ font-weight: bold;
        <property name="contextMenuPolicy">
         <enum>Qt::NoContextMenu</enum>
        </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="styleSheet">
         <string notr="true">border: none;</string>
        </property>
@@ -933,7 +987,7 @@ font-weight: bold;
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>500</x>
+      <x>390</x>
       <y>110</y>
       <width>111</width>
       <height>81</height>
@@ -942,6 +996,9 @@ font-weight: bold;
     <layout class="QVBoxLayout" name="mergeLayout">
      <item>
       <widget class="QPushButton" name="mergeButton">
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="styleSheet">
         <string notr="true">border: none;</string>
        </property>
@@ -981,10 +1038,15 @@ font-weight: bold;
       <height>29</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Przeszukiwane są wszystkie pliki (poza kolorem szarym)</string>
+    </property>
+    <property name="whatsThis">
+     <string>Przeszukiwanie wszystkich plików</string>
+    </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 border-radius: 5px;
-border: 1px solid lightgray;
 background: &quot;white&quot;;
 }</string>
     </property>
@@ -1001,11 +1063,16 @@ background: &quot;white&quot;;
       <height>29</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Przeszukiwanie plików oznaczonych kolorem niebieskim</string>
+    </property>
+    <property name="whatsThis">
+     <string>Przeszukiwanie plików oznaczonych kolorem niebieskim</string>
+    </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 border-radius: 5px;
-border: 1px solid lightgray;
-background: &quot;lightblue&quot;;
+background: rgb(0,176,240);
 }</string>
     </property>
     <property name="text">
