@@ -19,16 +19,19 @@ SOURCES += main.cpp\
      mainwindow.cpp \
      settingsdialog.cpp \
      finder.cpp \
-    mergedialog.cpp
+    mergedialog.cpp \
+    helpdialog.cpp
 
 HEADERS  += mainwindow.h \
       settingsdialog.h \
       finder.h \
-    mergedialog.h
+    mergedialog.h \
+    helpdialog.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui \
-    mergedialog.ui
+    mergedialog.ui \
+    helpdialog.ui
 
 RESOURCES += \
     resources.qrc

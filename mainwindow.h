@@ -13,6 +13,7 @@
 #include <finder.h>
 #include <settingsdialog.h>
 #include <mergedialog.h>
+#include <helpdialog.h>
 
 namespace Ui {
 class MainWindow;
