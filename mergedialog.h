@@ -8,6 +8,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QDirIterator>
+#include <QtAlgorithms>
 
 namespace Ui {
 class MergeDialog;
@@ -31,6 +32,7 @@ private:
     QString m_savePath{};
     QString m_fileName{};
     QStringList m_mergeList{};
+    void sortPathList(QStringList & list);
 };
 
 #endif // MERGEDIALOG_H
