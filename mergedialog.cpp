@@ -83,9 +83,10 @@ void MergeDialog::on_buttonFolder_clicked()
 
         sortPathList(m_mergeList);
 
+
         if(m_mergeList.size() != 0) {
 
-            QFile file(folderPath + "/list.lst");
+            QFile file(folderPath + "/list.txt");
             if (file.open(QFile::WriteOnly|QFile::Truncate)) {
                 QTextStream stream(&file);
                 for(int i=0; i<m_mergeList.size(); ++i) {
@@ -97,7 +98,7 @@ void MergeDialog::on_buttonFolder_clicked()
             QProcess * ghostScript = new QProcess(this);
             ghostScript->start("gswin64 -dNOPAUSE -dEmbedAllFonts=true -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
-                               " -dBATCH @"+folderPath+"/list.lst");
+                               " -dBATCH @"+folderPath+"/list.txt");
 
             ui->buttonFolder->setIcon(QIcon(":/images/images/wait.png"));
             ui->buttonFolder->setText("");

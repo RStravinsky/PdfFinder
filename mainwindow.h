@@ -38,8 +38,10 @@ private slots:
     void on_itemFound(QString itemName, bool isFound);
     void on_setValue(int value, QString labelText);
     void on_processingFinished(bool isSuccess, QString information);  
-    void on_whiteRadio_clicked(bool checked);
-    void on_blueRadio_clicked(bool checked);
+    void on_sigmaButton_clicked();
+    void on_othersButton_clicked();
+    void on_blueButton_clicked();
+    void on_whiteButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -51,6 +53,7 @@ private:
     QString schedulePath{};
     bool processing{false};
     bool isWhite{true};
+    bool isSigma{true};
 
     enum readType
     {

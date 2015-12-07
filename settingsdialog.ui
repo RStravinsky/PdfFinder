@@ -128,7 +128,7 @@ QComboBox::down-arrow{
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>10</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -171,7 +171,7 @@ background: #A9A9A9 ;
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>10</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="styleSheet">
