@@ -12,7 +12,7 @@ class Finder : public QObject
 {
     Q_OBJECT
 public:
-    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite);
+    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite, bool isSigma);
     void abort();
 
 signals:
@@ -24,24 +24,24 @@ public slots:
     void findFiles();
 
 private:
-    int filesCounter;
-    bool loadFileList();
-    bool checkSchedule(QXlsx::Document & schedule);
-    QString generateCSV(QStringList &missingFilesList);
-    void removeCopiedFiles();
-    QString renameFile(int num, QString fileName);
-
     QStringList m_fileList;
     QString m_schedulePath;
     QString m_searchedFolder;
     QString m_targetFolder;
     bool m_isWhite;
+    bool m_isSigma;
     bool m_abort;
-    QThread * scheduleThread;
-    int count;
+    int filesCounter;
 
+    bool loadFileList();
+    bool rowCount(QXlsx::Document & schedule, int &lastRow);
+    void findCells(QXlsx::Document &schedule, QXlsx::Cell *cell, int row, QMap<QString,QColor> & colorsMap);
+
+    bool checkSchedule(QXlsx::Document & schedule);
+    QString generateCSV(QStringList &missingFilesList, QStringList &copiedFilesList);
+    void removeCopiedFiles();
+    QString renameFile(int num, QString fileName);
     QStringList checkMissingFiles(QStringList &copiedFilesList);
-    bool searchFolder(QString path, QStringList &copiedFilesList);
     QStringList getFileListIdx(QString fileName);
 };
 

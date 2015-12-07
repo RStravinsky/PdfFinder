@@ -231,7 +231,7 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>390</x>
       <y>380</y>
       <width>131</width>
       <height>61</height>
@@ -285,7 +285,7 @@ background: #A9A9A9 ;
      <rect>
       <x>20</x>
       <y>382</y>
-      <width>401</width>
+      <width>361</width>
       <height>31</height>
      </rect>
     </property>
@@ -1029,83 +1029,142 @@ font-weight: bold;
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QPushButton" name="sigmaButton">
     <property name="geometry">
      <rect>
-      <x>569</x>
+      <x>525</x>
       <y>380</y>
       <width>41</width>
       <height>29</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>Przeszukiwane są wszystkie pliki (poza kolorem szarym)</string>
-    </property>
-    <property name="whatsThis">
-     <string>Przeszukiwanie wszystkich plików</string>
+     <string>Części produkowane w Sigmie</string>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
+     <string notr="true">QPushButton {
 border-radius: 5px;
+border: 2px solid rgb(90,90,90);
 background: &quot;white&quot;;
-}</string>
+}
+</string>
     </property>
     <property name="text">
      <string/>
     </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/images/images/sigma.png</normaloff>:/images/images/sigma.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QPushButton" name="othersButton">
     <property name="geometry">
      <rect>
-      <x>569</x>
+      <x>525</x>
       <y>412</y>
       <width>41</width>
       <height>29</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>Przeszukiwanie plików oznaczonych kolorem niebieskim</string>
-    </property>
-    <property name="whatsThis">
-     <string>Przeszukiwanie plików oznaczonych kolorem niebieskim</string>
+     <string>Wszystkie części</string>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
+     <string notr="true">QPushButton {
 border-radius: 5px;
-background: rgb(0,176,240);
-}</string>
+background: &quot;white&quot;;
+}
+</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="resources.qrc">
+      <normaloff>:/images/images/world.png</normaloff>:/images/images/world.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
-   <widget class="QRadioButton" name="whiteRadio">
+   <widget class="QPushButton" name="whiteButton">
     <property name="geometry">
      <rect>
-      <x>584</x>
-      <y>387</y>
-      <width>16</width>
-      <height>17</height>
+      <x>570</x>
+      <y>380</y>
+      <width>41</width>
+      <height>29</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Przeszukuje wszystkie kolory (poza kolorem szarym)</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 5px;
+border: 2px solid rgb(90,90,90);
+background: &quot;white&quot;;
+}
+</string>
     </property>
     <property name="text">
      <string/>
     </property>
-    <property name="checked">
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="checkable">
      <bool>true</bool>
     </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
    </widget>
-   <widget class="QRadioButton" name="blueRadio">
+   <widget class="QPushButton" name="blueButton">
     <property name="geometry">
      <rect>
-      <x>584</x>
-      <y>418</y>
-      <width>16</width>
-      <height>17</height>
+      <x>570</x>
+      <y>412</y>
+      <width>41</width>
+      <height>29</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Przeszukuje tylko niebieskie komórki</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 5px;
+background: #00B0F0;
+}
+</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
    <zorder>layoutWidget</zorder>
@@ -1123,10 +1182,10 @@ background: rgb(0,176,240);
    <zorder>statusLabel</zorder>
    <zorder>label</zorder>
    <zorder>monicaLabel</zorder>
-   <zorder>label_2</zorder>
-   <zorder>label_3</zorder>
-   <zorder>whiteRadio</zorder>
-   <zorder>blueRadio</zorder>
+   <zorder>sigmaButton</zorder>
+   <zorder>othersButton</zorder>
+   <zorder>whiteButton</zorder>
+   <zorder>blueButton</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

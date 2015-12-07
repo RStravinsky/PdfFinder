@@ -83,7 +83,7 @@ void MergeDialog::on_buttonFolder_clicked()
 
         if(m_mergeList.size() != 0) {
 
-
+            m_mergeList.sort();
             QFile file(folderPath + "/list.txt");
             if (file.open(QFile::WriteOnly|QFile::Truncate)) {
                 QTextStream stream(&file);

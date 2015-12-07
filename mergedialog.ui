@@ -65,7 +65,7 @@
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -96,8 +96,8 @@ background: #A9A9A9 ;
    </property>
    <property name="iconSize">
     <size>
-     <width>36</width>
-     <height>36</height>
+     <width>16</width>
+     <height>16</height>
     </size>
    </property>
    <property name="default">
@@ -181,7 +181,7 @@ border: 1px solid black;
    <property name="font">
     <font>
      <family>Arial</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -212,8 +212,8 @@ background: #A9A9A9 ;
    </property>
    <property name="iconSize">
     <size>
-     <width>42</width>
-     <height>42</height>
+     <width>16</width>
+     <height>16</height>
     </size>
    </property>
   </widget>

@@ -29,20 +29,36 @@ QPushButton:pressed {border: 1px solid gray; background: #A9A9A9; width: 71px; h
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>90</y>
-     <width>75</width>
-     <height>23</height>
+     <x>90</x>
+     <y>74</y>
+     <width>91</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>OK</string>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/found.png</normaloff>:/images/images/found.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
    </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>10</y>
      <width>221</width>
      <height>21</height>
@@ -61,10 +77,10 @@ QPushButton:pressed {border: 1px solid gray; background: #A9A9A9; width: 71px; h
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>50</x>
      <y>30</y>
      <width>191</width>
-     <height>51</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -74,7 +90,26 @@ QPushButton:pressed {border: 1px solid gray; background: #A9A9A9; width: 71px; h
     </font>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;mailto:rafal.strawinski@sigmasa.pl &quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;rafal.strawinski@sigmasa.pl&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;mailto: bartlomiej.pokrzywa@sigmasa.pl&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0000ff;&quot;&gt;bartlomiej.pokrzywa@sigmasa.pl&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;mailto:rafal.strawinski@sigmasa.pl &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffffff;&quot;&gt;rafal.strawinski@sigmasa.pl&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>50</y>
+     <width>201</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;mailto:bartlomiej.pokrzywa@sigmasa.pl&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#ffffff;&quot;&gt;bartlomiej.pokrzywa@sigmasa.pl&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

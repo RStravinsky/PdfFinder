@@ -1,13 +1,15 @@
 #include "finder.h"
 
-Finder::Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite) :
+Finder::Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite, bool isSigma) :
     QObject(parent),
     m_schedulePath(schedulePath),
     m_searchedFolder(searchedFolder),
     m_targetFolder(targetFolder),
-    m_isWhite(isWhite)
+    m_isWhite(isWhite),
+    m_isSigma(isSigma)
 {
     m_abort = false;
+    qDebug() << "isWhite: " << m_isWhite << endl;
 }
 
 void Finder::abort()
@@ -17,95 +19,81 @@ void Finder::abort()
 
 void Finder::findFiles()
 {
-    bool isFileListLoaded = loadFileList();
+    if(!QDir(m_targetFolder).mkdir("Pliki_PDF")) {
+        emit finished(false, "Folder \"Pliki_PDF\" już istnieje.");
+        return;
+    }
 
-    if(!isFileListLoaded) return;
+    bool isFileListLoaded = loadFileList();
+    if(!isFileListLoaded)
+        return;
 
     if(isFileListLoaded && m_fileList.size() == 0) {
         emit finished(false, "Nie znaleziono plików w harmonogramie.");
         return;
     }
 
-    if(!QDir(m_targetFolder).mkdir("Pliki_PDF")) {
-        emit finished(false, "Folder \"Pliki_PDF\" już istnieje.");
-        return;
-    }
-
     emit signalProgress( 100, "Określenie liczby plików do przeszukania ...");
     QDir dir(m_searchedFolder, QString("*.pdf"), QDir::NoSort, QDir::Files | QDir::NoSymLinks);
-    QDirIterator dirIt(dir, QDirIterator::Subdirectories);
+    QDirIterator counterIt(dir, QDirIterator::Subdirectories);
     filesCounter = 0;
-    while (dirIt.hasNext()) {
+    while (counterIt.hasNext()) {
             bool abort = m_abort;
             if (abort) {
                 emit finished(false);
                 return;
             }
-
             filesCounter++;
-            dirIt.next();
+            counterIt.next();
+    }
+    if(filesCounter == 0) {
+        emit finished(false, "Nie znaleziono plików w wybranej lokalizacji.");
+        return;
     }
 
-    emit signalProgress( 0, "Przeszukiwanie plików: = 0/" + QString::number(filesCounter));
-
-    QStringList copiedFilesList;
-    count = 0;
-    if(!searchFolder(m_searchedFolder,copiedFilesList)) {
-            qDebug() << "BREAK" << endl;
-            emit finished(false);
-            return;
-    }
-
-    qDebug() << "NOT BREAK" << endl;
-
-    QStringList missedFiless = checkMissingFiles(copiedFilesList);
-
-    QString information = generateCSV(missedFiless);
-    emit finished(true,information);
-}
-
-bool Finder::searchFolder(QString path, QStringList &copiedFilesList)
-{
-    QDir dir(path);
-    QString renamedFile;
     QStringList indexList;
-    QStringList filter;
-    filter << "*.pdf";
-    static bool isAborted = true;
-
-    foreach (QString file, dir.entryList(filter, QDir::Files | QDir::NoSymLinks)) {
+    QStringList copiedFilesList;
+    QString renamedFile;
+    int count = 0;
+    QDirIterator finalIt(dir, QDirIterator::Subdirectories);
+    while (finalIt.hasNext()) {
 
         bool abort = m_abort;
         if (abort) {
             removeCopiedFiles();
-            isAborted = false;
-            return isAborted;
+            emit finished(false);
+            return;
         }
 
-        if(m_fileList.contains(QFileInfo(dir, file).fileName(), Qt::CaseInsensitive)) {
+        if(m_fileList.contains(QFileInfo(finalIt.filePath()).fileName(), Qt::CaseInsensitive)) {
 
-            indexList = getFileListIdx(QFileInfo(dir, file).fileName());
+            indexList = getFileListIdx(QFileInfo(finalIt.filePath()).fileName());
 
             for(int i = 0; i < indexList.size(); ++i) {
-                renamedFile = renameFile(indexList.at(i).toInt(), QFileInfo(dir, file).fileName());
+
+                renamedFile = renameFile(indexList.at(i).toInt(), QFileInfo(finalIt.filePath()).fileName());
 
                 if(!QFile(m_targetFolder + "/Pliki_PDF/" + renamedFile).exists()) {
-                    QFile::copy(QFileInfo(dir, file).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
+                    QFile::copy(QFileInfo(finalIt.filePath()).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
                     copiedFilesList.append(renamedFile);
+                    qDebug() << "copied" << endl;
                     emit itemFound(renamedFile, true);
                 }
             }
         }
+
+        finalIt.next();
         count++;
         emit signalProgress( int((double(count)/double(filesCounter)*100)),
                          "Przeszukiwanie plików: " + QString::number(count) + "/" +
                          QString::number(filesCounter));
     }
 
-    foreach (QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
-            searchFolder(path + QDir::separator() + subDir, copiedFilesList);
+    QStringList missedFiless = checkMissingFiles(copiedFilesList);
+    qDebug() << "size:" << missedFiless.size();
 
-    return isAborted;
+    QString information = generateCSV(missedFiless,copiedFilesList);
+    emit finished(true,information);
 }
 
 QStringList Finder::getFileListIdx(QString fileName)
@@ -125,6 +113,7 @@ QStringList Finder::checkMissingFiles(QStringList &copiedFilesList)
     QStringList missingFilesList;
     uint index=0;
     if(!copiedFilesList.isEmpty()) {
+        qDebug() << "checkmissing" << endl;
         for(auto it = m_fileList.begin(); it != m_fileList.end(); ++it) {
             auto foundIt = std::find_if(copiedFilesList.begin(), copiedFilesList.end(),[&,it](QString name){ if(name.contains(*it)) return true;});
             if( foundIt == copiedFilesList.end())
@@ -138,26 +127,71 @@ QStringList Finder::checkMissingFiles(QStringList &copiedFilesList)
 bool Finder::loadFileList()
 {
     emit signalProgress(100, "Wczytywanie harmonogramu ...");
-
     QXlsx::Document schedule(m_schedulePath);
 
     if(!checkSchedule(schedule)) {
-        emit finished(false, "Harmonogram niepoprawny.");
+        emit finished(false, "Harmonogram niepoprawnie sformatowany.");
         return false;
     }
 
+    // find last row of schedule
     int lastRow = 0;
-    QString currentCellNumber;
+    if(!rowCount(schedule,lastRow))
+        return false;
 
-    QColor nocolor;
-    QColor orange; orange.setRgbF(1, 0.8, 0, 1);
-    QColor orange2; orange2.setRgbF(1, 0.752941, 0, 1);
-    QColor yellow; yellow.setRgbF(1, 1, 0, 1);
-    QColor red; red.setRgbF(1, 0, 0, 1);
+    QMap<QString,QColor> colorsMap;
+    QColor color;
+    colorsMap["nocolor"] = color;
+    color.setRgbF(1,0.8,0,1);
+    colorsMap["orange"] = color;
+    color.setRgbF(1,0.752941,0,1);
+    colorsMap["orange2"] = color;
+    color.setRgbF(1,1,0,1);
+    colorsMap["yellow"] = color;
 
-    int TEST = 0;
+
+    if(m_isWhite)
+    {
+        for (int row=7; row<=lastRow; ++row)
+        {
+            bool abort = m_abort;
+            if (abort) {
+                emit finished(false);
+                return false;
+            }
+
+            if (QXlsx::Cell *cell=schedule.cellAt(row, 3))
+                findCells(schedule,cell,row,colorsMap);
+
+            emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
+        }
+    }
+
+    else
+    {
+        for (int row=7; row<=lastRow; ++row)
+        {
+            bool abort = m_abort;
+            if (abort) {
+                emit finished(false);
+                return false;
+            }
+
+            QXlsx::Cell *cell=schedule.cellAt(row, 3);
+            if (schedule.cellAt(row, 2)->format().patternBackgroundColor().toRgb() != colorsMap["nocolor"])
+                findCells(schedule,cell,row,colorsMap);
+
+            emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
+        }
+    }
+
+    qDebug() << "Wielkość listy: " << m_fileList.size();
+    return true;
+}
 
 
+bool Finder::rowCount(QXlsx::Document &schedule,int & lastRow)
+{
     for (int row=7; row<65000; ++row)
     {
         bool abort = m_abort;
@@ -175,116 +209,76 @@ bool Finder::loadFileList()
             }
         }
     }
-
-
-
-    if(m_isWhite)
-    {
-
-        for (int row=7; row<=lastRow; ++row)
-        {
-            bool abort = m_abort;
-            if (abort) {
-                emit finished(false);
-                return false;
-            }
-
-
-            if (QXlsx::Cell *cell=schedule.cellAt(row, 3))
-            {
-
-                if(cell->format().patternBackgroundColor().toRgb() == nocolor && !cell->value().toString().isEmpty())
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-                    currentCellNumber = schedule.cellAt(row, 2)->value().toString();
-
-                    if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
-                    {
-                        if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
-                        {
-
-                            m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
-
-                        }
-                    }
-                }
-
-                if ((cell->format().patternBackgroundColor().toRgb() == orange && !cell->value().toString().isEmpty()) ||
-                    (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()))
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-                }
-
-                if(cell->format().patternBackgroundColor().toRgb() == yellow &&
-                   !cell->value().toString().isEmpty() &&
-                   schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-                }
-            }
-            emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
-        }
-
-    }
-
-    else
-    {
-        for (int row=7; row<=lastRow; ++row)
-        {
-            bool abort = m_abort;
-            if (abort) {
-                emit finished(false);
-                return false;
-            }
-
-            QXlsx::Cell *cell=schedule.cellAt(row, 3);
-
-            if (schedule.cellAt(row, 2)->format().patternBackgroundColor().toRgb() != nocolor)
-            {
-                TEST++;
-                if(cell->format().patternBackgroundColor().toRgb() == nocolor && !cell->value().toString().isEmpty())
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-
-                    currentCellNumber = schedule.cellAt(row, 2)->value().toString();
-
-                    if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
-                    {
-                        if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
-                        {
-
-                            m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
-
-                        }
-                    }
-                }
-
-                if ((cell->format().patternBackgroundColor().toRgb() == orange && !cell->value().toString().isEmpty()) ||
-                    (cell->format().patternBackgroundColor().toRgb() == orange2 && !cell->value().toString().isEmpty()))
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-                }
-
-                if(cell->format().patternBackgroundColor().toRgb() == yellow &&
-                   !cell->value().toString().isEmpty() &&
-                   schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
-                {
-                    m_fileList << cell->value().toString().trimmed() + ".pdf";
-
-                }
-            }
-            emit signalProgress(int((double(row)/double(lastRow)*100))+1, "Tworzenie listy plików ...");
-        }
-    }
-
-    qDebug() << "Wielkość listy: " << m_fileList.size();
-
     return true;
+}
+
+void Finder::findCells(QXlsx::Document &schedule, QXlsx::Cell *cell, int row, QMap<QString, QColor> &colorsMap)
+{
+    QString currentCellNumber=0;
+
+    if(!m_isSigma) {
+
+        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["nocolor"] && !cell->value().toString().isEmpty())
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+            currentCellNumber = schedule.cellAt(row, 2)->value().toString();
+
+            if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
+            {
+                if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
+                    m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+            }
+        }
+
+        if ((cell->format().patternBackgroundColor().toRgb() == colorsMap["orange"] && !cell->value().toString().isEmpty()) ||
+            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange2"] && !cell->value().toString().isEmpty()))
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+
+        }
+
+        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] &&
+           !cell->value().toString().isEmpty() &&
+           schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+        }
+    }
+
+    else {
+
+        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["nocolor"] &&
+           !cell->value().toString().isEmpty() &&
+           schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+            currentCellNumber = schedule.cellAt(row, 2)->value().toString();
+
+            if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
+            {
+                if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
+                    m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+            }
+        }
+
+        if ((cell->format().patternBackgroundColor().toRgb() == colorsMap["orange"] &&
+             schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive) &&
+             !cell->value().toString().isEmpty()) ||
+            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange2"] &&
+             schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive) &&
+             !cell->value().toString().isEmpty()))
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+
+        }
+
+        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] &&
+           !cell->value().toString().isEmpty() &&
+           schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
+        {
+            m_fileList << cell->value().toString().trimmed() + ".pdf";
+        }
+    }
 }
 
 bool Finder::checkSchedule(QXlsx::Document &schedule)
@@ -317,7 +311,7 @@ void Finder::removeCopiedFiles()
     QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
-QString Finder::generateCSV(QStringList & missingFilesList)
+QString Finder::generateCSV(QStringList & missingFilesList, QStringList & copiedFilesList)
 {
     QString information{};
     if(!missingFilesList.isEmpty()) {
@@ -337,12 +331,14 @@ QString Finder::generateCSV(QStringList & missingFilesList)
                       + "\nSkopiowano: " + QString::number(m_fileList.size()-missingFilesList.size()) + "/"
                       + QString::number(m_fileList.size()) + " plików.";
     }
-    else
+    else if (missingFilesList.isEmpty() && !copiedFilesList.isEmpty())
         information = "Przeszukiwanie zakończone.\nSkopiowano wszystkie pliki.";
+    else if (missingFilesList.isEmpty() && copiedFilesList.isEmpty()) {
+        removeCopiedFiles();
+        information = "Nie znaleziono plików";
+    }
 
     return information;
-
-
 }
 
 

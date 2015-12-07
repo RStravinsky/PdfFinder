@@ -130,8 +130,10 @@ void MainWindow::setEnabled(bool isEnabled)
 {
     if(isEnabled) {
         processing = true;
-        ui->whiteRadio->setEnabled(false);
-        ui->blueRadio->setEnabled(false);
+        ui->whiteButton->setEnabled(false);
+        ui->blueButton->setEnabled(false);
+        ui->sigmaButton->setEnabled(false);
+        ui->othersButton->setEnabled(false);
         ui->listWidget->clear();
         ui->label->setVisible(false);
         ui->inputLineEdit->setEnabled(false);
@@ -141,8 +143,10 @@ void MainWindow::setEnabled(bool isEnabled)
     }
     else {   
         processing = false;
-        ui->whiteRadio->setEnabled(true);
-        ui->blueRadio->setEnabled(true);
+        ui->whiteButton->setEnabled(true);
+        ui->blueButton->setEnabled(true);
+        ui->sigmaButton->setEnabled(true);
+        ui->othersButton->setEnabled(true);
         ui->inputLineEdit->setEnabled(true);
         ui->outputLineEdit->setEnabled(true);
         ui->searchButton->setText("WYSZUKAJ");
@@ -166,7 +170,7 @@ QString MainWindow::getOutputPath()
 
 QString MainWindow::getSchedulePath()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Wybierz folder"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
+    QString path = QFileDialog::getOpenFileName(this, tr("Wybierz harmonogram"), tr("//K1/Handlowy/DH/Realizacje"), tr("Pliki XLSX (*.xlsx)"));
     if(!schedulePath.isEmpty() && path.isEmpty()) return schedulePath;
     else return path;
 }
@@ -264,7 +268,7 @@ void MainWindow::on_searchButton_clicked()
             if(finder!=nullptr) delete finder;
             if(finderThread!=nullptr) delete finderThread;
 
-            finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text(), isWhite);
+            finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text(), isWhite, isSigma);
             finderThread = new QThread;
             finder->moveToThread(finderThread);
 
@@ -336,14 +340,30 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
     }
 }
 
-void MainWindow::on_whiteRadio_clicked(bool checked)
+void MainWindow::on_sigmaButton_clicked()
 {
-    if(checked)
-        isWhite = true;
+    isSigma = true;
+    ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
+    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
 }
 
-void MainWindow::on_blueRadio_clicked(bool checked)
+void MainWindow::on_othersButton_clicked()
 {
-    if(checked)
-        isWhite = false;
+    isSigma = false;
+    ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
+}
+
+void MainWindow::on_blueButton_clicked()
+{
+    isWhite = false;
+    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: #00B0F0}");
+}
+
+void MainWindow::on_whiteButton_clicked()
+{
+    isWhite = true;
+    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
+    ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #00B0F0;background: #00B0F0}");
 }
