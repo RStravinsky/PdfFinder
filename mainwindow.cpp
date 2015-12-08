@@ -233,7 +233,6 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
     }
 }
 
-
 void MainWindow::on_searchButton_clicked()
 {
     if(!processing) {
