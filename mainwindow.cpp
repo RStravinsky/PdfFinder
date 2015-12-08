@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->outputLineEdit->setCursorPosition(0);
     ui->inputLineEdit->setCursorPosition(0);
-    ui->monicaLabel->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -215,7 +214,6 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
     else if ( mainButton == ui->exitButton )
         QApplication::quit();
 
-
     else if ( mainButton == ui->settingsButton )
     {
         settingsDialog->previousState = settingsDialog->isTurnOn;
@@ -226,27 +224,19 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
     {
         HelpDialog * helpDialog = new HelpDialog(this);
         helpDialog->exec();
-
     }
 
     else if ( mainButton == ui->mergeButton ) {
-        MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
-        mergeDialog->exec();
+        QMessageBox::information(this, tr("Informacja"), QString("Opcja aktualnie nie aktywna."));
+        //MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
+        //mergeDialog->exec();
     }
 }
 
 
 void MainWindow::on_searchButton_clicked()
 {
-    if(!processing) { // search button
-
-        /* Easter egg */
-        static bool active = true;
-        if( ui->inputLineEdit->text()=="pizze chce") {
-            ui->monicaLabel->setVisible(active);
-            active = !active;
-            return;
-        }
+    if(!processing) {
 
         QStringList missingPaths;
 
@@ -257,11 +247,12 @@ void MainWindow::on_searchButton_clicked()
         if( ui->scheduleLineEdit->text().isEmpty() || !ui->scheduleLineEdit->text().contains("xlsx"))
             missingPaths << "ścieżka harmonogramu";
 
-        if (!missingPaths.isEmpty())
+        if (!missingPaths.isEmpty()) {
             if( ui->inputLineEdit->text() == ui->outputLineEdit->text() )
                 QMessageBox::information(this, tr("Informacja"), QString("Ścieżka wyszukiwania nie może być scieżką zapisu."));
             else
                 QMessageBox::information(this, tr("Informacja"), QString("Brakujące ścieżki: "+missingPaths.join(",")+"" + "."));
+        }
         else {      
             setEnabled(true);
 
@@ -283,23 +274,20 @@ void MainWindow::on_searchButton_clicked()
         }
     }
 
-    else { // clear button
+    else {
         finder->abort();
         finderThread->wait();
         delete finderThread;
         delete finder;
         finder = nullptr;
         finderThread = nullptr;
-
     }
 }
 
 void MainWindow::on_itemFound(QString itemName, bool isFound)
 {
-
     if(isFound) ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/found.png"),itemName));
     else ui->listWidget->insertItem(0,new QListWidgetItem(QIcon(":/images/images/notfound.png"),itemName));
-
 }
 
 void MainWindow::on_setValue(int value, QString labelText)

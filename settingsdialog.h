@@ -27,7 +27,6 @@ private slots:
 private:
     Ui::SettingsDialog *ui;
     bool isRejected{false};
-
 };
 
 #endif // SETTINGSDIALOG_H

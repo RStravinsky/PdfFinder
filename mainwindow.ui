@@ -911,25 +911,6 @@ font-weight: bold;
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="monicaLabel">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>420</y>
-      <width>51</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap resource="resources.qrc">:/images/images/monica.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
@@ -1181,7 +1162,6 @@ background: #00B0F0;
    <zorder>layoutWidget</zorder>
    <zorder>statusLabel</zorder>
    <zorder>label</zorder>
-   <zorder>monicaLabel</zorder>
    <zorder>sigmaButton</zorder>
    <zorder>othersButton</zorder>
    <zorder>whiteButton</zorder>
