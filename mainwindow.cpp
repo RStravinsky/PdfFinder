@@ -133,6 +133,7 @@ void MainWindow::setEnabled(bool isEnabled)
         ui->blueButton->setEnabled(false);
         ui->sigmaButton->setEnabled(false);
         ui->othersButton->setEnabled(false);
+        ui->allButton->setEnabled(false);
         ui->listWidget->clear();
         ui->label->setVisible(false);
         ui->inputLineEdit->setEnabled(false);
@@ -146,6 +147,7 @@ void MainWindow::setEnabled(bool isEnabled)
         ui->blueButton->setEnabled(true);
         ui->sigmaButton->setEnabled(true);
         ui->othersButton->setEnabled(true);
+        ui->allButton->setEnabled(true);
         ui->inputLineEdit->setEnabled(true);
         ui->outputLineEdit->setEnabled(true);
         ui->searchButton->setText("WYSZUKAJ");
@@ -258,13 +260,14 @@ void MainWindow::on_searchButton_clicked()
             if(finder!=nullptr) delete finder;
             if(finderThread!=nullptr) delete finderThread;
 
-            finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text(), isWhite, isSigma);
+            finder = new Finder(0, schedulePath, ui->inputLineEdit->text(), ui->outputLineEdit->text(), isWhite, searchCriterion);
             finderThread = new QThread;
             finder->moveToThread(finderThread);
 
             QObject::connect( finder, SIGNAL(finished(bool,QString)), this, SLOT(on_processingFinished(bool,QString)));
             QObject::connect( finder, SIGNAL(itemFound(QString,bool)), this, SLOT(on_itemFound(QString,bool)));
             QObject::connect( finder, SIGNAL(signalProgress(int,QString) ), this, SLOT( on_setValue(int,QString)));
+            QObject::connect( finder, SIGNAL(showCopartnerDialog()),this,SLOT(on_showCopartnerDialog()),Qt::BlockingQueuedConnection);
 
             QObject::connect( finderThread, SIGNAL(started()), finder, SLOT(findFiles())); // start searching
             QObject::connect( finder, SIGNAL(finished(bool,QString)), finderThread, SLOT(quit()),Qt::DirectConnection);
@@ -329,28 +332,50 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
 
 void MainWindow::on_sigmaButton_clicked()
 {
-    isSigma = true;
-    ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
-    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    searchCriterion = "Sigma";
+    ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: white}");
+    ui->allButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white;color:gray;}");
+}
+
+void MainWindow::on_allButton_clicked()
+{
+    searchCriterion = "";
+    ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    ui->allButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: white}");
+    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white;color:gray;}");
+}
+
+void MainWindow::on_showCopartnerDialog()
+{
+    CopartnerDialog copartnerDialog(finder->getCopartnerSet());
+    if (copartnerDialog.exec() == QDialog::Accepted)
+        finder->setSearchCriterion(copartnerDialog.copartner);
 }
 
 void MainWindow::on_othersButton_clicked()
 {
-    isSigma = false;
+    searchCriterion = "Others";
+    isWhite = true;
     ui->sigmaButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
-    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
+    ui->allButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+    ui->othersButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: white;color:gray;}");
+    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: white}");
+    ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #00B0F0;background: #00B0F0}");
 }
 
 void MainWindow::on_blueButton_clicked()
 {
-    isWhite = false;
-    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
-    ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: #00B0F0}");
+    if(searchCriterion != "Others") {
+        isWhite = false;
+        ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid white;background: white}");
+        ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: #00B0F0}");
+    }
 }
 
 void MainWindow::on_whiteButton_clicked()
 {
     isWhite = true;
-    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid rgb(90,90,90);background: white}");
+    ui->whiteButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #DF5B0B;background: white}");
     ui->blueButton->setStyleSheet("QPushButton {border-radius: 5px;border: 2px solid #00B0F0;background: #00B0F0}");
 }

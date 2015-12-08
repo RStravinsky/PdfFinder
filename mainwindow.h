@@ -8,12 +8,14 @@
 #include <QDebug>
 #include <QMediaPlayer>
 #include <QThread>
+#include <QSet>
 
 #include <stddef.h>
 #include <finder.h>
 #include <settingsdialog.h>
 #include <mergedialog.h>
 #include <helpdialog.h>
+#include <copartnerdialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +44,8 @@ private slots:
     void on_othersButton_clicked();
     void on_blueButton_clicked();
     void on_whiteButton_clicked();
+    void on_allButton_clicked();
+    void on_showCopartnerDialog();
 
 private:
     Ui::MainWindow *ui;
@@ -53,7 +57,7 @@ private:
     QString schedulePath{};
     bool processing{false};
     bool isWhite{true};
-    bool isSigma{true};
+    QString searchCriterion{};
 
     enum readType
     {
@@ -62,16 +66,15 @@ private:
         OUTPUT = 2
     };
 
-    bool eventFilter(QObject *obj, QEvent *event);
     QString getInputPath();
     QString getOutputPath();
     QString getSchedulePath();
-
     QString getPathFromFile(readType type);
     void savePathToFile();
     void fillPaths();
-    void setEnabled(bool isEnabled);
 
+    void setEnabled(bool isEnabled);
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif // MAINWINDOW_H
