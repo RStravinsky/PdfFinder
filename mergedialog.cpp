@@ -76,9 +76,11 @@ void MergeDialog::on_buttonFolder_clicked()
                 m_mergeList.append(QFileInfo(dirIt.filePath()).absoluteFilePath());
         }
 
+        sortPathList(m_mergeList);
+
+
         if(m_mergeList.size() != 0) {
 
-            m_mergeList.sort();
             QFile file(folderPath + "/list.txt");
             if (file.open(QFile::WriteOnly|QFile::Truncate)) {
                 QTextStream stream(&file);
@@ -88,7 +90,7 @@ void MergeDialog::on_buttonFolder_clicked()
                 file.close();
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin64 -dNOPAUSE -dEmbedAllFonts=true -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH @"+folderPath+"/list.txt");
 
@@ -105,4 +107,9 @@ void MergeDialog::on_buttonFolder_clicked()
             return;
       }
    }
+}
+
+void MergeDialog::sortPathList(QStringList & list)
+{
+    qSort(list.begin(), list.end(), [&](QString s1, QString s2){ return (s1.split("/").last().split("_").first().toInt() < s2.split("/").last().split("_").first().toInt()); } );
 }
