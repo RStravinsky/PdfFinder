@@ -82,6 +82,7 @@ void MergeDialog::on_buttonFolder_clicked()
         }
 
         sortPathList(m_mergeList);
+        QStringList renamedFileList;
 
 
         if(m_mergeList.size() != 0) {
@@ -91,8 +92,13 @@ void MergeDialog::on_buttonFolder_clicked()
                 QTextStream stream(&file);
                 for(int i=0; i<m_mergeList.size(); ++i) {
                     stream << "\"" + m_mergeList.at(i) + "\"" << "\n"; // this writes first line with two columns
+                    //renamedFileList << m_mergeList.at(i).remove(QRegExp(QString::fromUtf8("ŁłŚśĘęŃńĄąÓó")));
                 }
                 file.close();
+
+
+
+
 
 
             QProcess * ghostScript = new QProcess(this);
