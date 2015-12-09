@@ -43,7 +43,7 @@ void MergeDialog::on_buttonFiles_clicked()
                }
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin32c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH "+filesToMerge+"");
 
@@ -105,7 +105,7 @@ void MergeDialog::on_buttonFolder_clicked()
 
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin32c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH @"+folderPath+"/list.txt");
 

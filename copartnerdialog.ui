@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CopartnerDialog</class>
+ <widget class="QDialog" name="CopartnerDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>262</width>
+    <height>121</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Kryterium wyszukiwania</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#CopartnerDialog { background: &quot;gray&quot; }
+
+#CopartnerDialog QScrollBar:vertical {
+  border: none;
+  background: &quot;transparent&quot;;
+  width: 15px;
+  margin: 20px 0px 20px 0px;
+}
+
+#CopartnerDialog QScrollBar::handle:vertical {
+  background: &quot;lightgray&quot;;
+  min-height: 20px;
+  border-radius: 2px;
+}
+
+#CopartnerDialog QScrollBar::add-line:vertical {
+  image: url(:/images/images/downArrow.png);
+  background: &quot;lightgray&quot;;
+  height: 15px;
+  subcontrol-position: bottom;
+  subcontrol-origin: margin;
+  border-radius: 2px;
+}
+
+#CopartnerDialog QScrollBar::sub-line:vertical {
+  image: url(:/images/images/upArrow.png);
+  background: &quot;lightgray&quot;;
+  height: 15px;
+  subcontrol-position: top;
+  subcontrol-origin: margin;
+  border-radius: 2px;
+}
+</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>5</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ffffff;&quot;&gt;Wpisz kryterium:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelIcon">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>0</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/handshake.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelButton">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>60</y>
+     <width>115</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Anuluj</string>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/clear.png</normaloff>:/images/images/clear.png</iconset>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="okButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>115</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+QPushButton:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QPushButton:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+</string>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/found.png</normaloff>:/images/images/found.png</iconset>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>242</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QComboBox {
+color: &quot;gray&quot;;
+border-radius: 5px;
+border: 1px solid lightgray;
+background: &quot;white&quot;;
+}
+
+QComboBox::drop-down{
+subcontrol-origin: padding;
+subcontrol-position: center right;
+right: 2px;
+border-width: 0px;
+}
+
+QComboBox:hover {
+background: &quot;lightgray&quot;;
+color: &quot;white&quot;;
+width: 300px;
+}
+
+QComboBox:pressed {
+border: 1px solid &quot;gray&quot;;
+background: #A9A9A9 ;
+}
+
+QComboBox::down-arrow{
+ image: url(:/images/images/downArrow.png);
+ height: 50px;
+ width:  50px;
+}
+
+
+
+
+</string>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -7,18 +7,25 @@
 #include <QDirIterator>
 #include <QThread>
 #include <QtAlgorithms>
+#include <QSet>
+#include <QMetaType>
+#include <QString>
 
 class Finder : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite, bool isSigma);
+    explicit Finder(QObject *parent, QString schedulePath, QString searchedFolder, QString targetFolder, bool isWhite, QString searchCriterion);
     void abort();
+    void setSearchCriterion(QString searchCriterion);
+    QSet<QString> getCopartnerSet();
 
 signals:
     void itemFound(QString itemName, bool isFound);
     void signalProgress(int, QString);
     void finished(bool,QString = "");
+    void showCopartnerDialog();
 
 public slots:
     void findFiles();
@@ -28,10 +35,11 @@ private:
     QString m_schedulePath;
     QString m_searchedFolder;
     QString m_targetFolder;
-    bool m_isWhite;
-    bool m_isSigma;
     bool m_abort;
+    bool m_isWhite;
+    QString m_searchCriterion;
     int filesCounter;
+    QSet<QString> m_copartnerSet;
 
     bool loadFileList();
     bool rowCount(QXlsx::Document & schedule, int &lastRow);

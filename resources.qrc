@@ -23,5 +23,7 @@
         <file>images/found_64.png</file>
         <file>images/sigma.png</file>
         <file>images/world.png</file>
+        <file>images/handshake.png</file>
+        <file>images/sigma_name.jpg</file>
     </qresource>
 </RCC>

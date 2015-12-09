@@ -186,19 +186,6 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ffffff;&quot;&gt;Przygotowywanie dokumentacji do druku&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>545</x>
-       <y>5</y>
-       <width>81</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:600; color:#ffffff;&quot;&gt;test version&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
@@ -244,7 +231,7 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>380</x>
       <y>380</y>
       <width>131</width>
       <height>61</height>
@@ -298,7 +285,7 @@ background: #A9A9A9 ;
      <rect>
       <x>20</x>
       <y>382</y>
-      <width>361</width>
+      <width>351</width>
       <height>31</height>
      </rect>
     </property>
@@ -1026,10 +1013,10 @@ font-weight: bold;
    <widget class="QPushButton" name="sigmaButton">
     <property name="geometry">
      <rect>
-      <x>525</x>
+      <x>515</x>
       <y>380</y>
       <width>41</width>
-      <height>29</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -1038,7 +1025,7 @@ font-weight: bold;
     <property name="styleSheet">
      <string notr="true">QPushButton {
 border-radius: 5px;
-border: 2px solid rgb(90,90,90);
+border: 2px solid #DF5B0B;
 background: &quot;white&quot;;
 }
 </string>
@@ -1048,7 +1035,7 @@ background: &quot;white&quot;;
     </property>
     <property name="icon">
      <iconset resource="resources.qrc">
-      <normaloff>:/images/images/sigma.png</normaloff>:/images/images/sigma.png</iconset>
+      <normaloff>:/images/images/sigma_name.jpg</normaloff>:/images/images/sigma_name.jpg</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -1063,13 +1050,13 @@ background: &quot;white&quot;;
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="othersButton">
+   <widget class="QPushButton" name="allButton">
     <property name="geometry">
      <rect>
-      <x>525</x>
-      <y>412</y>
+      <x>515</x>
+      <y>403</y>
       <width>41</width>
-      <height>29</height>
+      <height>17</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -1091,8 +1078,8 @@ background: &quot;white&quot;;
     </property>
     <property name="iconSize">
      <size>
-      <width>30</width>
-      <height>30</height>
+      <width>15</width>
+      <height>15</height>
      </size>
     </property>
    </widget>
@@ -1111,7 +1098,7 @@ background: &quot;white&quot;;
     <property name="styleSheet">
      <string notr="true">QPushButton {
 border-radius: 5px;
-border: 2px solid rgb(90,90,90);
+border: 2px solid #DF5B0B ;
 background: &quot;white&quot;;
 }
 </string>
@@ -1161,6 +1148,49 @@ background: #00B0F0;
      </size>
     </property>
    </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>562</x>
+      <y>380</y>
+      <width>3</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="othersButton">
+    <property name="geometry">
+     <rect>
+      <x>515</x>
+      <y>423</y>
+      <width>41</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Alternatywne wyszukiwanie</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 5px;
+background: &quot;white&quot;;
+color: &quot;gray&quot;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>topFrame</zorder>
@@ -1176,9 +1206,11 @@ background: #00B0F0;
    <zorder>statusLabel</zorder>
    <zorder>label</zorder>
    <zorder>sigmaButton</zorder>
-   <zorder>othersButton</zorder>
+   <zorder>allButton</zorder>
    <zorder>whiteButton</zorder>
    <zorder>blueButton</zorder>
+   <zorder>line_2</zorder>
+   <zorder>othersButton</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
