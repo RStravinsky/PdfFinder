@@ -58,6 +58,7 @@ private:
     bool processing{false};
     bool isWhite{true};
     QString searchCriterion{};
+    void sortListWidget();
 
     enum readType
     {

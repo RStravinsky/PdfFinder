@@ -231,9 +231,9 @@ void MainWindow::on_mainButtonReleased(const QPushButton *mainButton)
     }
 
     else if ( mainButton == ui->mergeButton ) {
-        QMessageBox::information(this, tr("Informacja"), QString("Opcja aktualnie nie aktywna."));
-        //MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
-        //mergeDialog->exec();
+
+        MergeDialog * mergeDialog = new MergeDialog(this,ui->outputLineEdit->text());
+        mergeDialog->exec();
     }
 }
 
@@ -330,6 +330,24 @@ void MainWindow::on_processingFinished(bool isSuccess, QString information)
             emptyListMessage.exec();
         }
     }
+
+    if(ui->listWidget->count() != 0)
+        sortListWidget();
+
+}
+
+void MainWindow::sortListWidget()
+{
+    QList<QPair<QString, QIcon>> list;
+
+    for(int i = 0; i < ui->listWidget->count(); ++i)
+        list.append(qMakePair(ui->listWidget->item(i)->text(), ui->listWidget->item(i)->icon()));
+
+    qSort(list.begin(), list.end(), [&](QPair<QString, QIcon> s1, QPair<QString, QIcon> s2){ return (s1.first.split("_").first().toInt() < s2.first.split("_").first().toInt()); } );
+    ui->listWidget->clear();
+
+    for(int i = 0; i < list.size(); ++i)
+        ui->listWidget->insertItem(i, new QListWidgetItem(list.at(i).second, list.at(i).first));
 }
 
 void MainWindow::on_sigmaButton_clicked()
