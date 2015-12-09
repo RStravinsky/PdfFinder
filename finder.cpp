@@ -39,7 +39,7 @@ void Finder::findFiles()
 
     if(isFileListLoaded && m_fileList.size() == 0) {
         removeCopiedFiles();
-        emit finished(false, "Nie znaleziono plików w harmonogramie.");
+        emit finished(false, "Nie znaleziono pasujących pozycji w harmonogramie.");
         return;
     }
 
@@ -58,7 +58,7 @@ void Finder::findFiles()
             counterIt.next();
     }
     if(filesCounter == 0) {
-        emit finished(false, "Nie znaleziono plików w wybranej lokalizacji.");
+        emit finished(false, "Nie znaleziono plików PDF w wybranej lokalizacji.");
         return;
     }
 
@@ -153,12 +153,12 @@ bool Finder::loadFileList()
             emit showCopartnerDialog();
         else {
             removeCopiedFiles();
-            emit finished(false, "Nie znaleziono kooperantów.");
+            emit finished(false, "Nie znaleziono kooperantów w harmonogramie.");
             return false;
         }
         if(m_searchCriterion == "Others") {
             removeCopiedFiles();
-            emit finished(false, "Anulowano");
+            emit finished(false, "Anulowano wyszukiwanie.");
             return false;
         }
     }
@@ -234,7 +234,11 @@ bool Finder::rowCount(QXlsx::Document &schedule,int & lastRow)
         if(m_searchCriterion == "Others") {
             if(QXlsx::Cell *cell=schedule.cellAt(row, 10))
                 if(!cell->value().toString().isEmpty()){
-                    m_copartnerSet.insert(cell->value().toString());
+
+                    QStringList list = cell->value().toString().split(" ");
+                    if(list.back()!="")m_copartnerSet.insert(cell->value().toString().toLower());
+                    else m_copartnerSet.insert(cell->value().toString().toLower().replace(" ",""));
+
                 }
         }
     }
@@ -337,7 +341,6 @@ QString Finder::renameFile(int num, QString fileName)
 
 void Finder::removeCopiedFiles()
 {
-    emit signalProgress(100, "Usuwanie plików ...");
     QDir(m_targetFolder + "/Pliki_PDF").removeRecursively();
 }
 
@@ -365,7 +368,7 @@ QString Finder::generateCSV(QStringList & missingFilesList, QStringList & copied
         information = "Przeszukiwanie zakończone.\nSkopiowano wszystkie pliki.";
     else if (missingFilesList.isEmpty() && copiedFilesList.isEmpty()) {
         removeCopiedFiles();
-        information = "Nie znaleziono plików";
+        information = "Przeszukiwanie zakończone.\nNie skopiowano żadnego pliku.";
     }
 
     return information;
