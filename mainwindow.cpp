@@ -74,7 +74,7 @@ QString MainWindow::getPathFromFile(readType type)
 
     if (!pathFile.open(QIODevice::ReadOnly)) {
             QMessageBox::information(this, "Informacja", "Ścieżka nie odczytana poprawnie.\nERROR: can't open PATH.txt");
-            return QString("//K1/napps/NAPPS");
+            return QString("INITPATH");
         }
 
     QTextStream out(&pathFile);
@@ -87,7 +87,7 @@ QString MainWindow::getPathFromFile(readType type)
     }
 
     pathFile.close();
-    return readPath == "" ? QString("//K1/napps/NAPPS") : readPath;
+    return readPath == "" ? QString("INITPATH") : readPath;
 }
 
 void MainWindow::savePathToFile()
@@ -110,9 +110,9 @@ void MainWindow::fillPaths()
 {
     QString path = getPathFromFile(INIT);
 
-    if( path == QString("//K1/napps/NAPPS") ){
-        ui->inputLineEdit->setText(path);
-        ui->outputLineEdit->setText(path);
+    if( path == QString("INITPATH") ){
+        ui->inputLineEdit->setText("//K1/napps/NAPPS");
+        ui->outputLineEdit->setText(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     }
     else {
         QStringList pathList = path.split(";");
@@ -120,7 +120,7 @@ void MainWindow::fillPaths()
         if( pathList.at(0).isEmpty()) ui->inputLineEdit->setText(QString("//K1/napps/NAPPS"));
         else ui->inputLineEdit->setText(pathList.at(0));
 
-        if( pathList.at(1).isEmpty()) ui->outputLineEdit->setText(QString("//K1/napps/NAPPS"));
+        if( pathList.at(1).isEmpty()) ui->outputLineEdit->setText(QString(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)));
         else ui->outputLineEdit->setText(pathList.at(1));
     }
 }
@@ -158,6 +158,7 @@ void MainWindow::setEnabled(bool isEnabled)
 QString MainWindow::getInputPath()
 {
     QString initPath = getPathFromFile(INPUT);
+    if(initPath == "INITPATH") initPath = QString("//K1/napps/NAPPS");
     QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), initPath );
     return path;
 }
@@ -165,6 +166,7 @@ QString MainWindow::getInputPath()
 QString MainWindow::getOutputPath()
 {
     QString initPath = getPathFromFile(OUTPUT);
+    if(initPath == "INITPATH") initPath = QString(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     QString path = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), initPath );
     return path;
 }

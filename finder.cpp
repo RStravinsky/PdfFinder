@@ -233,8 +233,10 @@ bool Finder::rowCount(QXlsx::Document &schedule,int & lastRow)
 
         if(m_searchCriterion == "Others") {
             if(QXlsx::Cell *cell=schedule.cellAt(row, 10))
-                if(!cell->value().toString().isEmpty())
+                if(!cell->value().toString().isEmpty()){
                     m_copartnerSet.insert(cell->value().toString());
+                    qDebug() << cell->value().toString() << endl;
+                }
         }
     }
     return true;
