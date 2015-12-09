@@ -10,6 +10,18 @@
     <height>121</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>262</width>
+    <height>121</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>262</width>
+    <height>121</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Kryterium wyszukiwania</string>
   </property>

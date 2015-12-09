@@ -57,7 +57,7 @@ private:
     QString schedulePath{};
     bool processing{false};
     bool isWhite{true};
-    QString searchCriterion{};
+    QString searchCriterion{"Sigma"};
     void sortListWidget();
 
     enum readType

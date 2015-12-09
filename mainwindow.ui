@@ -231,7 +231,7 @@ radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
    <widget class="QPushButton" name="searchButton">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>378</x>
       <y>380</y>
       <width>131</width>
       <height>61</height>
@@ -284,7 +284,7 @@ background: #A9A9A9 ;
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>382</y>
+      <y>380</y>
       <width>351</width>
       <height>31</height>
      </rect>

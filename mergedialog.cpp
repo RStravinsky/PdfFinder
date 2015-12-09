@@ -18,8 +18,8 @@ MergeDialog::~MergeDialog()
 
 void MergeDialog::on_buttonName_clicked()
 {
-    m_fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+    m_fileName = QFileDialog::getSaveFileName(this, tr("Plik do zapisu"),
+                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.pdf",
                                tr("Pliki PDF (*.pdf)"));
     QStringList namePathList = m_fileName.split("/");
     ui->nameLineEdit->setText(namePathList.at(namePathList.size()-1));
@@ -105,7 +105,7 @@ void MergeDialog::on_buttonFolder_clicked()
 
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin32c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin32 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH @"+folderPath+"/list.txt");
 
