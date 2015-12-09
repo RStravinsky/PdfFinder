@@ -9,7 +9,6 @@ Finder::Finder(QObject *parent, QString schedulePath, QString searchedFolder, QS
     m_isSigma(isSigma)
 {
     m_abort = false;
-    qDebug() << "isWhite: " << m_isWhite << endl;
 }
 
 void Finder::abort()
@@ -40,6 +39,7 @@ void Finder::findFiles()
     while (counterIt.hasNext()) {
             bool abort = m_abort;
             if (abort) {
+                removeCopiedFiles();
                 emit finished(false);
                 return;
             }
@@ -76,7 +76,7 @@ void Finder::findFiles()
                 if(!QFile(m_targetFolder + "/Pliki_PDF/" + renamedFile).exists()) {
                     QFile::copy(QFileInfo(finalIt.filePath()).filePath(), m_targetFolder + "/Pliki_PDF/" + renamedFile);
                     copiedFilesList.append(renamedFile);
-                    qDebug() << "copied" << endl;
+                    //qDebug() << "copied" << endl;
                     emit itemFound(renamedFile, true);
                 }
             }
@@ -90,7 +90,6 @@ void Finder::findFiles()
     }
 
     QStringList missedFiless = checkMissingFiles(copiedFilesList);
-    qDebug() << "size:" << missedFiless.size();
 
     QString information = generateCSV(missedFiless,copiedFilesList);
     emit finished(true,information);
@@ -113,9 +112,9 @@ QStringList Finder::checkMissingFiles(QStringList &copiedFilesList)
     QStringList missingFilesList;
     uint index=0;
     if(!copiedFilesList.isEmpty()) {
-        qDebug() << "checkmissing" << endl;
+        //qDebug() << "checkmissing" << endl;
         for(auto it = m_fileList.begin(); it != m_fileList.end(); ++it) {
-            auto foundIt = std::find_if(copiedFilesList.begin(), copiedFilesList.end(),[&,it](QString name){ if(name.contains(*it)) return true;});
+            auto foundIt = std::find_if(copiedFilesList.begin(), copiedFilesList.end(),[&,it](QString name){ if(name.contains(*it)) return true; else return false;});
             if( foundIt == copiedFilesList.end())
                 missingFilesList << renameFile(index,*it);
             index++;
@@ -148,7 +147,6 @@ bool Finder::loadFileList()
     colorsMap["orange2"] = color;
     color.setRgbF(1,1,0,1);
     colorsMap["yellow"] = color;
-
 
     if(m_isWhite)
     {

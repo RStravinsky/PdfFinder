@@ -32,10 +32,8 @@ void MergeDialog::on_buttonFiles_clicked()
                 QMessageBox::information(this,tr("Informacja"),tr("Pole tekstowe jest nieuzupełnione."));
 
     else {
+
         m_mergeList = QFileDialog::getOpenFileNames(this, tr("Wybierz pliki"), QString(m_savePath+"/Pliki_PDF"), tr("Pliki PDF (*.pdf)"));
-
-        qDebug() << "File size: " << m_mergeList.size() << endl;
-
         if(m_mergeList.size() != 0) {
 
             QString filesToMerge;
@@ -45,16 +43,14 @@ void MergeDialog::on_buttonFiles_clicked()
                }
 
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin64 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH "+filesToMerge+"");
 
             ui->buttonFiles->setIcon(QIcon(":/images/images/wait.png"));
             ui->buttonFiles->setText("");
             ui->progressBar->setValue(100);
-            while(!ghostScript->waitForFinished()) {
-
-            }
+            while(!ghostScript->waitForFinished()) {}
             delete ghostScript;
 
             QMessageBox::information(this,tr("Informacja"),tr("Pliki zostały scalone."));
@@ -72,7 +68,6 @@ void MergeDialog::on_buttonFolder_clicked()
                 QMessageBox::information(this,tr("Informacja"),tr("Pole tekstowe jest nieuzupełnione."));
 
     else {
-
         QString folderPath = QFileDialog::getExistingDirectory(this , tr("Wybierz folder"), QString(m_savePath) );
         QDir dir(folderPath, QString("*.pdf"), QDir::NoSort, QDir::Files | QDir::NoSymLinks);
         QDirIterator dirIt(dir, QDirIterator::Subdirectories);
@@ -83,7 +78,7 @@ void MergeDialog::on_buttonFolder_clicked()
 
         sortPathList(m_mergeList);
         QStringList renamedFileList;
-
+        QString tmpString;
 
         if(m_mergeList.size() != 0) {
 
@@ -91,35 +86,48 @@ void MergeDialog::on_buttonFolder_clicked()
             if (file.open(QFile::WriteOnly|QFile::Truncate)) {
                 QTextStream stream(&file);
                 for(int i=0; i<m_mergeList.size(); ++i) {
-                    stream << "\"" + m_mergeList.at(i) + "\"" << "\n"; // this writes first line with two columns
-                    //renamedFileList << m_mergeList.at(i).remove(QRegExp(QString::fromUtf8("ŁłŚśĘęŃńĄąÓó")));
+
+                    tmpString = m_mergeList.at(i).split("/").last();
+
+                    if(tmpString.contains(QRegExp("[ŁŻŹŚĘŃĄÓĆłżźśęńąóć]"))) {
+
+                        tmpString.replace(QRegExp("[ŁŻŹŚĘŃĄÓĆłżźśęńąóć]"), "ryj");
+                        renamedFileList << folderPath + "/" + tmpString;
+                        QFile::rename(m_mergeList.at(i), renamedFileList.at(i));
+                    }
+                    else
+                        renamedFileList << m_mergeList.at(i);
+
+                    stream << "\"" + renamedFileList.at(i) + "\"" << "\n"; // this writes first line with two columns
+
                 }
                 file.close();
 
 
-
-
-
-
             QProcess * ghostScript = new QProcess(this);
-            ghostScript->start("gswin64 -dNOPAUSE -dEmbedAllFonts=true -sDEVICE=pdfwrite -sOUTPUTFILE="
+            ghostScript->start("gswin64 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                                +m_fileName+
                                " -dBATCH @"+folderPath+"/list.txt");
 
             ui->buttonFolder->setIcon(QIcon(":/images/images/wait.png"));
             ui->buttonFolder->setText("");
             ui->progressBar->setValue(100);
-            while(!ghostScript->waitForFinished()) {
-
-            }
+            while(!ghostScript->waitForFinished()) {}
             delete ghostScript;
+
+            for(int i=0; i<renamedFileList.size(); ++i) {
+                if(renamedFileList.at(i).contains("ryj"))
+                    QFile::rename(renamedFileList.at(i), m_mergeList.at(i));
+            }
+
+            QFile::remove(folderPath + "/list.txt");
 
             QMessageBox::information(this,tr("Informacja"),tr("Pliki zostały scalone."));
             MergeDialog::accept();
         }
         else
             return;
-    }
+      }
    }
 }
 

@@ -8,6 +8,8 @@ HelpDialog::HelpDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->label_2->setTextFormat(Qt::RichText);
     ui->label_2->setOpenExternalLinks(true);
+    ui->label_3->setTextFormat(Qt::RichText);
+    ui->label_3->setOpenExternalLinks(true);
 }
 
 HelpDialog::~HelpDialog()
