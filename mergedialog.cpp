@@ -45,7 +45,7 @@ void MergeDialog::on_buttonFiles_clicked()
         QString quotesFileName = "\"" + m_fileName + "\"";
 
         QProcess * ghostScript = new QProcess(this);
-        ghostScript->start("gswin32 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+        ghostScript->start("gswin32c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                            +quotesFileName+
                            " -dBATCH "+filesToMerge+"");
 
@@ -115,7 +115,7 @@ void MergeDialog::on_buttonFolder_clicked()
         QString quotesFileName = "\"" + m_fileName + "\"";
 
         QProcess * ghostScript = new QProcess(this);
-        ghostScript->start("gswin32 -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
+        ghostScript->start("gswin32c -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE="
                            +quotesFileName+
                            " -dBATCH @"+"\""+folderPath+"\""+"/list.txt");
 
