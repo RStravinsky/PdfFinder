@@ -23,7 +23,6 @@ public:
     ~MergeDialog();
 
 private slots:
-    void on_buttonName_clicked();
     void on_buttonFiles_clicked();
     void on_buttonFolder_clicked();
 

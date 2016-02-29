@@ -170,8 +170,12 @@ bool Finder::loadFileList()
     colorsMap["orange"] = color;
     color.setRgbF(1,0.752941,0,1);
     colorsMap["orange2"] = color;
+    color.setRgbF(1,0.8,0.6,1);
+    colorsMap["orange3"] = color;
     color.setRgbF(1,1,0,1);
     colorsMap["yellow"] = color;
+    color.setRgbF(1,1,0.4,1);
+    colorsMap["yellow2"] = color;
 
     if(m_isWhite)
     {
@@ -214,10 +218,11 @@ bool Finder::loadFileList()
 
 bool Finder::rowCount(QXlsx::Document &schedule,int & lastRow)
 {
-    for (int row=7; row<65000; ++row)
+    for (int row=7; row<65536; ++row)
     {
         bool abort = m_abort;
         if (abort) {
+            removeCopiedFiles();
             emit finished(false);
             return false;
         }
@@ -252,28 +257,29 @@ void Finder::findCells(QXlsx::Document &schedule, QXlsx::Cell *cell, int row, QM
 
     if(m_searchCriterion.isEmpty()) {
 
+
         if(cell->format().patternBackgroundColor().toRgb() == colorsMap["nocolor"] && !cell->value().toString().isEmpty())
         {
             m_fileList << cell->value().toString().trimmed() + ".pdf";
             currentCellNumber = schedule.cellAt(row, 2)->value().toString();
 
-            if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
-            {
-                if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
-                    m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+            if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber)) {
+                m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+                m_fileList.swap(m_fileList.size()-1, m_fileList.size()-2);
             }
+
         }
 
         if ((cell->format().patternBackgroundColor().toRgb() == colorsMap["orange"] && !cell->value().toString().isEmpty()) ||
-            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange2"] && !cell->value().toString().isEmpty()))
+            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange2"] && !cell->value().toString().isEmpty()) ||
+            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange3"] && !cell->value().toString().isEmpty()))
         {
             m_fileList << cell->value().toString().trimmed() + ".pdf";
 
         }
 
-        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] &&
-           !cell->value().toString().isEmpty() &&
-           schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive))
+        if((cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] && !cell->value().toString().isEmpty() && schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive)) ||
+          (cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow2"] && !cell->value().toString().isEmpty() && schedule.cellAt(row, 10)->value().toString().contains("Sigma", Qt::CaseInsensitive)))
         {
             m_fileList << cell->value().toString().trimmed() + ".pdf";
         }
@@ -288,11 +294,11 @@ void Finder::findCells(QXlsx::Document &schedule, QXlsx::Cell *cell, int row, QM
             m_fileList << cell->value().toString().trimmed() + ".pdf";
             currentCellNumber = schedule.cellAt(row, 2)->value().toString();
 
-            if(QXlsx::Cell *nextCell = schedule.cellAt(row+1, 3))
-            {
-                if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber))
-                    m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+            if(schedule.cellAt(row+1,2)->value().toString().contains(currentCellNumber)) {
+                m_fileList << cell->value().toString().trimmed() + "_wykaz.pdf";
+                m_fileList.swap(m_fileList.size()-1, m_fileList.size()-2);
             }
+
         }
 
         if ((cell->format().patternBackgroundColor().toRgb() == colorsMap["orange"] &&
@@ -300,19 +306,26 @@ void Finder::findCells(QXlsx::Document &schedule, QXlsx::Cell *cell, int row, QM
              !cell->value().toString().isEmpty()) ||
             (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange2"] &&
              schedule.cellAt(row, 10)->value().toString().contains(m_searchCriterion, Qt::CaseInsensitive) &&
+             !cell->value().toString().isEmpty()) ||
+            (cell->format().patternBackgroundColor().toRgb() == colorsMap["orange3"] &&
+             schedule.cellAt(row, 10)->value().toString().contains(m_searchCriterion, Qt::CaseInsensitive) &&
              !cell->value().toString().isEmpty()))
         {
             m_fileList << cell->value().toString().trimmed() + ".pdf";
 
         }
 
-        if(cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] &&
+        if((cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow"] &&
            !cell->value().toString().isEmpty() &&
-           schedule.cellAt(row, 10)->value().toString().contains(m_searchCriterion, Qt::CaseInsensitive))
+           schedule.cellAt(row, 10)->value().toString().contains(m_searchCriterion, Qt::CaseInsensitive)) ||
+           (cell->format().patternBackgroundColor().toRgb() == colorsMap["yellow2"] &&
+           !cell->value().toString().isEmpty() &&
+           schedule.cellAt(row, 10)->value().toString().contains(m_searchCriterion, Qt::CaseInsensitive)))
         {
             m_fileList << cell->value().toString().trimmed() + ".pdf";
         }
     }
+
 }
 
 bool Finder::checkSchedule(QXlsx::Document &schedule)
